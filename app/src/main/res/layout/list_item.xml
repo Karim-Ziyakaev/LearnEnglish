@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:background="@drawable/border"
+    android:layout_margin="3dp">
+
+    <TextView
+        android:id="@+id/word_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="18sp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/translation_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="18sp"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/change_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_edit_24" />
+
+    <ImageView
+        android:id="@+id/delete_image_view"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_delete_24" />
+
+    <ImageView
+        android:id="@+id/statistics_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_query_stats_24" />
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <!-- action button for search -->
+    <item android:title="search"
+        android:id="@+id/item_search"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/ic_baseline_search_24"/>
+
+    <group android:checkableBehavior="all"
+        android:id="@+id/group_items">
+        <item android:title="Buttons on elements"
+            android:id="@+id/item_btns_elements"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+
+        <item android:title="Sort A-Z"
+            android:id="@+id/item_sort"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+
+        <item android:title="Hide translation"
+            android:id="@+id/item_hide_translate"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+
+        <item android:title="Hide word"
+            android:id="@+id/item_hide_word"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+    </group>
+
+</menu>
