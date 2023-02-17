@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     boolean showWord;
     boolean showTranslation;
     boolean showButtons;
+    boolean sortAZ = false;
 
     WordAdapter adapter;
     RecyclerView recyclerView ;
@@ -144,20 +145,6 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             }
         });
 
-        MenuItem item_btns_elements;
-        MenuItem item_hide_word;
-        MenuItem item_hide_translate;
-        item_btns_elements = menu.findItem(R.id.item_btns_elements);
-        item_hide_word = menu.findItem(R.id.item_hide_word);
-        item_hide_translate = menu.findItem(R.id.item_hide_translate);
-
-        if (!showButtons)
-            item_btns_elements.setChecked(true);
-        if (!showWord)
-            item_hide_word.setChecked(true);
-        if (!showTranslation)
-            item_hide_translate.setChecked(true);
-
         // Call the super method
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -195,6 +182,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             case R.id.item_sort:
                 if(item.isChecked()) {
                     adapter.setList(list_words);
+                    sortAZ = false;
                     item.setChecked(false);
                 }
                 else {
@@ -207,6 +195,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                     });
                     adapter.setList(sorted_list_words);
                     item.setChecked(true);
+                    sortAZ = true;
                 }
                 return true;
             case R.id.item_hide_translate:
@@ -279,6 +268,25 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         MenuItem itemBtns = menu.findItem(R.id.item_btns_elements);
         MenuItem itemWords = menu.findItem(R.id.item_hide_word);
         MenuItem itemTranslates = menu.findItem(R.id.item_hide_translate);
+
+        itemWords.setChecked(!adapter.getShowWord());
+        itemBtns.setChecked(!adapter.getShowButtons());
+        itemTranslates.setChecked(!adapter.getShowTranslation());
+        itemSort.setChecked(sortAZ);
+
+        //грязный костыль для сорт
+        if(sortAZ)
+        {
+            ArrayList<Word> sorted_list_words = new ArrayList<>(list_words);
+            Collections.sort(sorted_list_words, new Comparator<Word>() {
+                @Override
+                public int compare(Word w1, Word w2) {
+                    return w1.getWord().compareTo(w2.getWord());
+                }
+            });
+            adapter.setList(sorted_list_words);
+        }
+
 
         if (selectedPositions!=null && !selectedPositions.isEmpty()) {
             itemDelete.setVisible(true);
