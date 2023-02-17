@@ -4,13 +4,13 @@ public class Word {
     private long id;
     private String word;
     private String translate;
-    private boolean is_selected;
+    private boolean isSelected;
 
     public Word(long id, String word, String translate){
         this.id = id;
         this.word = word;
         this.translate = translate;
-        this.is_selected = false;
+        this.isSelected = false;
     }
 
     public long getId() {
@@ -34,10 +34,10 @@ public class Word {
         return this.translate;
     }
 
-    public void setIs_selected(boolean is_selected){
-        this.is_selected = is_selected;
+    public void setIsSelected(boolean isSelected){
+        this.isSelected = isSelected;
     }
-    public boolean getIs_selected(){
-        return is_selected;
+    public boolean getIsSelected(){
+        return isSelected;
     }
 }

@@ -2,11 +2,7 @@ package com.example.LearnEnglish.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -37,24 +33,23 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     private Set<Integer> wSelectedPositions;
     private LayoutInflater inflater;
 
-    // Interface for handling clicks on items
-//    public interface OnItemClickListener {
-//        void onItemClick(Word word, int position);
-//    }
-//
-//    private OnItemClickListener listener;
-//
-//    public void setOnItemClickListener(OnItemClickListener listener) {
-//        this.listener = listener;
-//    }
-
-    public WordAdapter(Context context, List<Word> wordList/*, OnItemClickListener onClickListener*/) {
-//        this.listener = onClickListener;
+    public WordAdapter(Context context, List<Word> wordList) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.wordList = wordList;
         wSelectedPositions = new HashSet<>();
     }
+
+    private OnSelectionChangedListener selectionChangedListener;
+
+    public interface OnSelectionChangedListener {
+        void onSelectionChanged(Set<Integer> selectedPositions);
+    }
+
+    public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
+        this.selectionChangedListener = listener;
+    }
+
 
     @Override
     public WordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -93,23 +88,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
         if (wSelectedPositions.contains(position)) {
         // Элемент выделен
-            currentWord.setIs_selected(true);
+            currentWord.setIsSelected(true);
             holder.itemView.setBackgroundResource(R.drawable.border_move);
         } else {
         // Элемент не выделен
-            currentWord.setIs_selected(false);
+            currentWord.setIsSelected(false);
             holder.itemView.setBackgroundResource(R.drawable.border);
         }
-
-        // обработка нажатия
-//        holder.itemView.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v)
-//            {
-//                // вызываем метод слушателя, передавая ему данные
-//                listener.onItemClick(currentWord, position);
-//            }
-//        });
     }
 
     public void toggleSelection(int position) {
@@ -119,6 +104,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         } else {
             // Элемент не выделен, поэтому добавляем его к выделенным
             wSelectedPositions.add(position);
+        }
+        if (selectionChangedListener != null) {
+            selectionChangedListener.onSelectionChanged(wSelectedPositions);
         }
         notifyItemChanged(position);
     }
@@ -152,17 +140,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 public void onClick(View view) {
                     // Remove the item from the list
                     int position = getAdapterPosition();
-                    // Get the current word and translation
-                    Word word = wordList.get(position);
-
-                    DatabaseAdapter db_adapter = new DatabaseAdapter(context);
-                    db_adapter.open();
-                    //надо именно гетИд потому что айди в бд другое чем в листе
-                    db_adapter.delete(word.getId());
-                    db_adapter.close();
-                    wordList.remove(position);
-                    // Notify the adapter that the data has changed
-                    notifyItemRemoved(position);
+                    clickDelete(position);
                 }
             });
 
@@ -170,49 +148,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    // Get the current word and translation
-                    Word word = wordList.get(position);
-                    String currentWord = word.getWord();
-                    String currentTranslation = word.getTranslate();
-                    // Create an AlertDialog to edit the word and translation
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    View dialogView = LayoutInflater.from(context).inflate(R.layout.change_word_dialog, null);
-                    final EditText wordEditText = dialogView.findViewById(R.id.word_edit_text);
-                    final EditText translationEditText = dialogView.findViewById(R.id.translation_edit_text);
-                    wordEditText.setText(currentWord);
-                    translationEditText.setText(currentTranslation);
-                    builder.setView(dialogView)
-                            .setPositiveButton("Change", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    String s_word = wordEditText.getText().toString().trim();
-                                    String s_translate = translationEditText.getText().toString().trim();
-
-                                    if (s_word.isEmpty() || s_translate.isEmpty()) {
-                                        if (s_word.isEmpty())
-                                            wordEditText.setError("Error, empty word");
-                                        else
-                                            translationEditText.setError("Error, empty translation");
-                                    } else {
-                                        s_word = s_word.substring(0,1).toUpperCase() + s_word.substring(1).toLowerCase();
-                                        s_translate = s_translate.substring(0,1).toUpperCase() + s_translate.substring(1).toLowerCase();
-
-                                        wordList.set(position, new Word(word.getId(), s_word, s_translate));
-                                        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
-                                        db_adapter.open();
-                                        // Ошибка раньше была в том что передавал старое слово
-                                        Word new_word = wordList.get(position);
-                                        db_adapter.update(new_word);
-                                        db_adapter.close();
-                                        // Notify the adapter that the data has changed
-                                        notifyItemChanged(position);
-                                    }
-                                }
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .create()
-                            .show();
+                    clickChange(position);
                 }
             });
 
@@ -265,18 +201,16 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     public void onItemMove(int fromPosition, int toPosition) {
         Collections.swap(wordList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
-//        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
-//        db_adapter.open();
-//        long temp = wordList.get(fromPosition).getId();
-//        wordList.get(fromPosition).setId(wordList.get(toPosition).getId());
-//        wordList.get(toPosition).setId(temp);
-//        db_adapter.update(wordList.get(fromPosition));
-//        db_adapter.update(wordList.get(toPosition));
-//        db_adapter.close();
     }
 
     @Override
     public void onItemDismiss(int position) {
+        Word word = wordList.get(position);
+        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+        db_adapter.open();
+        //надо именно гетИд потому что айди в бд другое чем в листе
+        db_adapter.delete(word.getId());
+        db_adapter.close();
         wordList.remove(position);
         notifyItemRemoved(position);
     }
@@ -295,5 +229,64 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         return wSelectedPositions.size();
     }
 
+    private void clickChange(int position) {
+        // Get the current word and translation
+        Word word = wordList.get(position);
+        String currentWord = word.getWord();
+        String currentTranslation = word.getTranslate();
+        // Create an AlertDialog to edit the word and translation
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.change_word_dialog, null);
+        final EditText wordEditText = dialogView.findViewById(R.id.word_edit_text);
+        final EditText translationEditText = dialogView.findViewById(R.id.translation_edit_text);
+        wordEditText.setText(currentWord);
+        translationEditText.setText(currentTranslation);
+        builder.setView(dialogView)
+                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                        String s_word = wordEditText.getText().toString().trim();
+                        String s_translate = translationEditText.getText().toString().trim();
+
+                        if (s_word.isEmpty() || s_translate.isEmpty()) {
+                            if (s_word.isEmpty())
+                                wordEditText.setError("Error, empty word");
+                            else
+                                translationEditText.setError("Error, empty translation");
+                        } else {
+                            s_word = s_word.substring(0,1).toUpperCase() + s_word.substring(1).toLowerCase();
+                            s_translate = s_translate.substring(0,1).toUpperCase() + s_translate.substring(1).toLowerCase();
+
+                            wordList.set(position, new Word(word.getId(), s_word, s_translate));
+                            DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+                            db_adapter.open();
+                            // Ошибка раньше была в том что передавал старое слово
+                            Word new_word = wordList.get(position);
+                            db_adapter.update(new_word);
+                            db_adapter.close();
+                            // Notify the adapter that the data has changed
+                            notifyItemChanged(position);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    public void clickDelete(int position)
+    {
+        // Get the current word and translation
+        Word word = wordList.get(position);
+
+        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+        db_adapter.open();
+        //надо именно гетИд потому что айди в бд другое чем в листе
+        db_adapter.delete(word.getId());
+        db_adapter.close();
+        wordList.remove(position);
+        // Notify the adapter that the data has changed
+        notifyItemRemoved(position);
+    }
 }

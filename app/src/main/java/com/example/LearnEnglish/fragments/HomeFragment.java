@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,12 +30,14 @@ import com.example.LearnEnglish.adapters.WordAdapter;
 import com.example.LearnEnglish.models.Word;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements WordAdapter.OnSelectionChangedListener {
     SharedPreferences settings;
     SharedPreferences.Editor prefEditor;
 
@@ -49,6 +52,7 @@ public class HomeFragment extends Fragment {
 
     private MenuItem menuItem;
     private SearchView searchView;
+    Set<Integer> selectedPositions;
 
     public HomeFragment(Context context) {
         this.context = context;
@@ -70,16 +74,8 @@ public class HomeFragment extends Fragment {
 
         settings = getContext().getSharedPreferences("Show", Context.MODE_PRIVATE);
 
-//        WordAdapter.OnItemClickListener itemClickListener = new WordAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(Word word, int position) {
-//                Intent intent = new Intent(context, UserActivity.class);
-//                intent.putExtra("id", word.getId());
-//                startActivity(intent);
-//            }
-//        };
-
-        adapter = new WordAdapter(context, list_words/*, itemClickListener*/);
+        adapter = new WordAdapter(context, list_words);
+        adapter.setOnSelectionChangedListener(this);
         recyclerView.setAdapter(adapter);
 
         showWord = settings.getBoolean("showWord", true);
@@ -233,6 +229,18 @@ public class HomeFragment extends Fragment {
                 else
                     item.setChecked(true);
                 return true;
+            case R.id.item_delete:
+                for(int i : selectedPositions)
+                {
+                    adapter.clickDelete(i);
+                }
+                adapter.clearSelection();
+                getActivity().invalidateOptionsMenu();
+                return true;
+            case R.id.item_cancel:
+                adapter.clearSelection();
+                getActivity().invalidateOptionsMenu();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -252,23 +260,51 @@ public class HomeFragment extends Fragment {
         prefEditor.apply();
     }
 
-//    @Override
-//    public void onPrepareOptionsMenu(Menu menu) {
-//        super.onPrepareOptionsMenu(menu);
-//
-//        int numSelected = getNumSelectedItems();
-//        if (numSelected > 0) {
-//            // Switch to the "selected_menu" menu
-//            getActivity().getMenuInflater().inflate(R.menu.selected_menu, menu);
-//        } else {
-//            // Switch to the "actionbar_menu" menu
-//            getActivity().getMenuInflater().inflate(R.menu.actionbar_menu, menu);
-//        }
-//    }
+    @Override
+    public void onSelectionChanged(Set<Integer> selectedPositions) {
+        // Handle selection state changes
+        this.selectedPositions = selectedPositions;
+        getActivity().invalidateOptionsMenu();
+    }
 
-    private int getNumSelectedItems() {
-        // Replace this with a call to your adapter to get the number of selected items
-        return adapter.getSelectedItemCount();
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem itemDelete = menu.findItem(R.id.item_delete);
+        MenuItem itemCancel = menu.findItem(R.id.item_cancel);
+
+        MenuItem itemSearch = menu.findItem(R.id.item_search);
+        MenuItem itemSort = menu.findItem(R.id.item_sort);
+        MenuItem itemBtns = menu.findItem(R.id.item_btns_elements);
+        MenuItem itemWords = menu.findItem(R.id.item_hide_word);
+        MenuItem itemTranslates = menu.findItem(R.id.item_hide_translate);
+
+        if (selectedPositions!=null && !selectedPositions.isEmpty()) {
+            itemDelete.setVisible(true);
+            itemCancel.setVisible(true);
+
+            itemSearch.setVisible(false);
+            itemSort.setVisible(false);
+            itemBtns.setVisible(false);
+            itemWords.setVisible(false);
+            itemTranslates.setVisible(false);
+
+            getActivity().setTitle(String.format("Selected: %d", adapter.getSelectedItemCount()));
+            getActivity().invalidateOptionsMenu();
+        } else {
+            itemDelete.setVisible(false);
+            itemCancel.setVisible(false);
+
+            itemSearch.setVisible(true);
+            itemSort.setVisible(true);
+            itemBtns.setVisible(true);
+            itemWords.setVisible(true);
+            itemTranslates.setVisible(true);
+
+            getActivity().setTitle(R.string.app_name);
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
 }

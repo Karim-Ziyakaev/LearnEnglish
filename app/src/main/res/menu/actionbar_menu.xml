@@ -34,4 +34,21 @@
             app:showAsAction="never" />
     </group>
 
+    <!-- action button for delete -->
+    <item android:title="delete"
+        android:id="@+id/item_delete"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:visible="false"
+        />
+
+    <!-- action button for cancel selection -->
+    <item android:title="cancel"
+        android:id="@+id/item_cancel"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_baseline_clear_24"
+        android:visible="false"/>
+
 </menu>
