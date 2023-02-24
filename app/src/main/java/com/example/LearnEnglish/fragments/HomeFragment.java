@@ -219,10 +219,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                     item.setChecked(true);
                 return true;
             case R.id.item_delete:
-                for(int i : selectedPositions)
-                {
-                    adapter.clickDelete(i);
-                }
+                adapter.removeSelected(selectedPositions);
                 adapter.clearSelection();
                 getActivity().invalidateOptionsMenu();
                 return true;
@@ -260,6 +257,12 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        // Чтобы при удалении элементы на вьюхе убирались
+        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+        db_adapter.open();
+        list_words = db_adapter.getWords();
+        adapter.setList(list_words);
+
         MenuItem itemDelete = menu.findItem(R.id.item_delete);
         MenuItem itemCancel = menu.findItem(R.id.item_cancel);
 
@@ -274,7 +277,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         itemTranslates.setChecked(!adapter.getShowTranslation());
         itemSort.setChecked(sortAZ);
 
-        //грязный костыль для сорт
+        //грязный костыль для сорт, можно сделать потом проверку на изменения
         if(sortAZ)
         {
             ArrayList<Word> sorted_list_words = new ArrayList<>(list_words);

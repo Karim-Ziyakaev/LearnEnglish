@@ -140,7 +140,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 public void onClick(View view) {
                     // Remove the item from the list
                     int position = getAdapterPosition();
-                    clickDelete(position);
+                    removeByIdx(position);
                 }
             });
 
@@ -275,7 +275,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 .show();
     }
 
-    public void clickDelete(int position)
+    public void removeByIdx(int position)
     {
         // Get the current word and translation
         Word word = wordList.get(position);
@@ -288,5 +288,18 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         wordList.remove(position);
         // Notify the adapter that the data has changed
         notifyItemRemoved(position);
+    }
+
+    public void removeSelected(Set<Integer> selectedPositions){
+        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+        db_adapter.open();
+        for(int i = selectedPositions.size() - 1; i>=0; i--)
+        {
+            Word word = wordList.get(i);
+            db_adapter.delete(word.getId());
+            wordList.remove(i);
+            notifyItemRemoved(i);
+        }
+        db_adapter.close();
     }
 }
