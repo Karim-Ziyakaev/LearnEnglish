@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity{
         // Получаем ссылку на ActionBar
         ActionBar actionBar = getSupportActionBar();
         // Устанавливаем цвет фона ActionBar
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#454545")));
+        if (actionBar != null) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#454545")));
+        }
 
         DatabaseHelper databaseHelper;
         databaseHelper = new DatabaseHelper(this);
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity{
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.home:
-                    replaceFragment(new HomeFragment(this));
+                    replaceFragment(new HomeFragment());
                     break;
                 case R.id.tests:
                     replaceFragment(new TestsFragment());
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        replaceFragment(new HomeFragment(this));
+        replaceFragment(new HomeFragment());
 
     }
 

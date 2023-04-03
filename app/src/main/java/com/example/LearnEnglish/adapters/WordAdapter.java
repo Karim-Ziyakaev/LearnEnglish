@@ -28,10 +28,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     private boolean showWord = true;
     private boolean showButtons = true;
 
-    private Context context;
+    private final Context context;
     private List<Word> wordList;
     private Set<Integer> wSelectedPositions;
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
 
     public WordAdapter(Context context, List<Word> wordList) {
         this.context = context;
@@ -51,8 +51,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     }
 
 
+    @NonNull
     @Override
-    public WordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public WordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.list_item, parent, false);
         return new WordViewHolder(view);
     }
@@ -144,28 +145,19 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 }
             });
 
-            changeImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    clickChange(position);
-                }
+            changeImageView.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                clickChange(position);
             });
 
-            statisticsImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Handle statistics icon click
-                }
+            statisticsImageView.setOnClickListener(view -> {
+                // Handle statistics icon click
             });
 
             // Устанавливаем слушатель нажатий на элемент
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Переключаем состояние выделения элемента
-                    toggleSelection(getAdapterPosition());
-                }
+            itemView.setOnClickListener(v -> {
+                // Переключаем состояние выделения элемента
+                toggleSelection(getAdapterPosition());
             });
         }
     }

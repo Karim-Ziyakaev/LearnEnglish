@@ -4,7 +4,7 @@
 
 
     <!-- action button for search -->
-    <item android:title="search"
+    <item android:title="@string/search"
         android:id="@+id/item_search"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
@@ -13,29 +13,29 @@
 
     <group android:checkableBehavior="all"
         android:id="@+id/group_items">
-        <item android:title="Buttons on elements"
+        <item android:title="@string/buttons_on_elements"
             android:id="@+id/item_btns_elements"
             android:orderInCategory="100"
             app:showAsAction="never" />
 
-        <item android:title="Sort A-Z"
+        <item android:title="@string/sort_a_z"
             android:id="@+id/item_sort"
             android:orderInCategory="100"
             app:showAsAction="never" />
 
-        <item android:title="Hide translation"
+        <item android:title="@string/hide_translation"
             android:id="@+id/item_hide_translate"
             android:orderInCategory="100"
             app:showAsAction="never" />
 
-        <item android:title="Hide word"
+        <item android:title="@string/hide_word"
             android:id="@+id/item_hide_word"
             android:orderInCategory="100"
             app:showAsAction="never" />
     </group>
 
     <!-- action button for delete -->
-    <item android:title="delete"
+    <item android:title="@string/delete"
         android:id="@+id/item_delete"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
@@ -44,7 +44,7 @@
         />
 
     <!-- action button for cancel selection -->
-    <item android:title="cancel"
+    <item android:title="@string/cancel"
         android:id="@+id/item_cancel"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"

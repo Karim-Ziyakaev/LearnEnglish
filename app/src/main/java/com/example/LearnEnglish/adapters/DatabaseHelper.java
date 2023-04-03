@@ -14,7 +14,7 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static String DB_PATH; // полный путь к базе данных
-    private static String DB_NAME = "lengdb.db";
+    private static final String DB_NAME = "lengdb.db";
     private static final int SCHEMA = 1; // версия базы данных
     static final String TABLE_WORDS = "words"; // название таблицы в бд
     static final String TABLE_RANDOM = "randomwords"; // название таблицы в бд

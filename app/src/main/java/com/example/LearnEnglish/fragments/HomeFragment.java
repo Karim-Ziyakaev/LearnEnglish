@@ -1,18 +1,19 @@
 package com.example.LearnEnglish.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +31,6 @@ import com.example.LearnEnglish.adapters.WordAdapter;
 import com.example.LearnEnglish.models.Word;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,15 +47,19 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     boolean sortAZ = false;
 
     WordAdapter adapter;
-    RecyclerView recyclerView ;
+    RecyclerView recyclerView;
     private Context context;
     List<Word> list_words;
 
-    private MenuItem menuItem;
-    private SearchView searchView;
     Set<Integer> selectedPositions;
 
-    public HomeFragment(Context context) {
+    public HomeFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
         this.context = context;
     }
 
@@ -73,7 +77,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
 
         list_words = db_adapter.getWords();
 
-        settings = getContext().getSharedPreferences("Show", Context.MODE_PRIVATE);
+        settings = requireContext().getSharedPreferences("Show", Context.MODE_PRIVATE);
 
         adapter = new WordAdapter(context, list_words);
         adapter.setOnSelectionChangedListener(this);
@@ -102,29 +106,26 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         FloatingActionButton fab_add = rootView.findViewById(R.id.btn_add);
-        fab_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, UserActivity.class);
-                startActivity(intent);
-            }
+        fab_add.setOnClickListener(view -> {
+            Intent intent = new Intent(context, UserActivity.class);
+            startActivity(intent);
         });
 
         return rootView;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         // Inflate the menu resource that contains the search button
         inflater.inflate(R.menu.actionbar_menu, menu);
 
         // Assign the menu item to the menuItem field
-        menuItem = menu.findItem(R.id.item_search);
-        searchView =(SearchView) MenuItemCompat.getActionView(menuItem);
+        MenuItem menuItem = menu.findItem(R.id.item_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         searchView.setIconified(true);
 
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -164,6 +165,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         return filteredList;
     }
 
+    @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch(id){
@@ -174,10 +176,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 adapter.setShowButtons(!adapter.getShowButtons());
                 // Update the view by calling notifyDataSetChanged() on the adapter
                 adapter.notifyDataSetChanged();
-                if(item.isChecked())
-                    item.setChecked(false);
-                else
-                    item.setChecked(true);
+                item.setChecked(!item.isChecked());
                 return true;
             case R.id.item_sort:
                 if(item.isChecked()) {
@@ -203,29 +202,23 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 adapter.setShowTranslation(!adapter.getShowTranslation());
                 // Update the view by calling notifyDataSetChanged() on the adapter
                 adapter.notifyDataSetChanged();
-                if(item.isChecked())
-                    item.setChecked(false);
-                else
-                    item.setChecked(true);
+                item.setChecked(!item.isChecked());
                 return true;
             case R.id.item_hide_word:
                 // Toggle the boolean flag that determines whether or not to show the word
                 adapter.setShowWord(!adapter.getShowWord());
                 // Update the view by calling notifyDataSetChanged() on the adapter
                 adapter.notifyDataSetChanged();
-                if(item.isChecked())
-                    item.setChecked(false);
-                else
-                    item.setChecked(true);
+                item.setChecked(!item.isChecked());
                 return true;
             case R.id.item_delete:
                 adapter.removeSelected(selectedPositions);
                 adapter.clearSelection();
-                getActivity().invalidateOptionsMenu();
+                requireActivity().invalidateOptionsMenu();
                 return true;
             case R.id.item_cancel:
                 adapter.clearSelection();
-                getActivity().invalidateOptionsMenu();
+                requireActivity().invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -254,7 +247,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
         // Чтобы при удалении элементы на вьюхе убирались
@@ -301,8 +294,8 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             itemWords.setVisible(false);
             itemTranslates.setVisible(false);
 
-            getActivity().setTitle(String.format("Selected: %d", adapter.getSelectedItemCount()));
-            getActivity().invalidateOptionsMenu();
+            requireActivity().setTitle(String.format("Selected: %d", adapter.getSelectedItemCount()));
+            requireActivity().invalidateOptionsMenu();
         } else {
             itemDelete.setVisible(false);
             itemCancel.setVisible(false);
@@ -313,8 +306,8 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             itemWords.setVisible(true);
             itemTranslates.setVisible(true);
 
-            getActivity().setTitle(R.string.app_name);
-            getActivity().invalidateOptionsMenu();
+            requireActivity().setTitle(R.string.app_name);
+            requireActivity().invalidateOptionsMenu();
         }
     }
 
