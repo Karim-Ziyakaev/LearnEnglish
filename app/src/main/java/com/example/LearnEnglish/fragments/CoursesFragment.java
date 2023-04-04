@@ -1,9 +1,14 @@
 package com.example.LearnEnglish.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
@@ -11,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.LearnEnglish.R;
+import com.example.LearnEnglish.activitys.Course1Activity;
 
 public class CoursesFragment extends Fragment {
 
@@ -18,19 +24,14 @@ public class CoursesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_courses, container, false);
+        requireActivity().setTitle("Courses");
 
-        WebView webView = (WebView) rootView.findViewById(R.id.webview);
-
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("https://www.youtube.com/embed/qAHMCZBwYo4");
-
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                view.loadUrl(request.getUrl().toString());
-                return true;
-            }
+        CardView cardCourse1 = rootView.findViewById(R.id.cardCourse1);
+        cardCourse1.setOnClickListener(view -> {
+            Intent intent = new Intent(requireContext(), Course1Activity.class);
+            startActivity(intent);
         });
+
 
         return rootView;
     }

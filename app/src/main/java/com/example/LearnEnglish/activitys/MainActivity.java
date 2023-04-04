@@ -24,12 +24,12 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        // Получаем ссылку на ActionBar
-        ActionBar actionBar = getSupportActionBar();
-        // Устанавливаем цвет фона ActionBar
-        if (actionBar != null) {
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#454545")));
-        }
+//        // Получаем ссылку на ActionBar
+//        ActionBar actionBar = getSupportActionBar();
+//        // Устанавливаем цвет фона ActionBar
+//        if (actionBar != null) {
+//            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#454545")));
+//        }
 
         DatabaseHelper databaseHelper;
         databaseHelper = new DatabaseHelper(this);
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         replaceFragment(new HomeFragment());
-
     }
 
     private void replaceFragment(Fragment fragment){
