@@ -15,6 +15,13 @@
         android:theme="@style/Theme.MaterialComponents"
         tools:targetApi="31">
         <activity
+            android:name=".activitys.VideoActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activitys.Course1Activity"
             android:exported="false">
             <meta-data

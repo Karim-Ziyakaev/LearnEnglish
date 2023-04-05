@@ -1,13 +1,10 @@
 package com.example.LearnEnglish.activitys;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import com.example.LearnEnglish.fragments.CoursesFragment;
@@ -19,17 +16,12 @@ import com.example.LearnEnglish.adapters.DatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity{
+    boolean firstOpen = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-//        // Получаем ссылку на ActionBar
-//        ActionBar actionBar = getSupportActionBar();
-//        // Устанавливаем цвет фона ActionBar
-//        if (actionBar != null) {
-//            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#454545")));
-//        }
 
         DatabaseHelper databaseHelper;
         databaseHelper = new DatabaseHelper(this);
@@ -56,9 +48,17 @@ public class MainActivity extends AppCompatActivity{
     }
 
     @Override
+    protected void onStart() {
+        if(firstOpen) {
+            replaceFragment(new HomeFragment());
+            firstOpen = false;
+        }
+        super.onStart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        replaceFragment(new HomeFragment());
     }
 
     private void replaceFragment(Fragment fragment){

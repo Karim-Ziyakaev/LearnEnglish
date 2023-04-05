@@ -129,18 +129,14 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Filter your data here.
                 List<Word> filteredList = filterData(query);
-                // Pass the filtered list to your adapter and call notifyDataSetChanged.
                 adapter.setList(filteredList);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Filter your data here.
                 List<Word> filteredList = filterData(newText);
-                // Pass the filtered list to your adapter and call notifyDataSetChanged.
                 adapter.setList(filteredList);
                 return true;
             }
@@ -243,7 +239,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     public void onSelectionChanged(Set<Integer> selectedPositions) {
         // Handle selection state changes
         this.selectedPositions = selectedPositions;
-        getActivity().invalidateOptionsMenu();
+        requireActivity().invalidateOptionsMenu();
     }
 
     @Override
