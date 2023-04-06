@@ -65,7 +65,7 @@ public class UserActivity extends AppCompatActivity {
             else
                 edt_word.setError("Error empty word");
         } else {
-            Word word = new Word(wordId, s_word, translate);
+            Word word = new Word(wordId, s_word, translate, 0);
 
             adapter.open();
             if (wordId > 0) {
@@ -86,7 +86,9 @@ public class UserActivity extends AppCompatActivity {
     private void goHome(){
         // переход к главной activity
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        finish();
         startActivity(intent);
+//        finish();
     }
 }

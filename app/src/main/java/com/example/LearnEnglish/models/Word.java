@@ -5,12 +5,14 @@ public class Word {
     private String word;
     private String translate;
     private boolean isSelected;
+    private int isFavorite;
 
-    public Word(long id, String word, String translate){
+    public Word(long id, String word, String translate, int isFavorite){
         this.id = id;
         this.word = word;
         this.translate = translate;
         this.isSelected = false;
+        this.isFavorite = isFavorite;
     }
 
     public long getId() {
@@ -39,5 +41,12 @@ public class Word {
     }
     public boolean getIsSelected(){
         return isSelected;
+    }
+
+    public void setIsFavorite(int isFavorite){
+        this.isFavorite = isFavorite;
+    }
+    public int getIsFavorite(){
+        return isFavorite;
     }
 }

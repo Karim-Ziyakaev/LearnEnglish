@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.LearnEnglish.R;
 import com.example.LearnEnglish.models.Word;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -250,7 +251,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                             s_word = s_word.substring(0,1).toUpperCase() + s_word.substring(1).toLowerCase();
                             s_translate = s_translate.substring(0,1).toUpperCase() + s_translate.substring(1).toLowerCase();
 
-                            wordList.set(position, new Word(word.getId(), s_word, s_translate));
+                            wordList.set(position, new Word(word.getId(), s_word, s_translate, word.getIsFavorite()));
                             DatabaseAdapter db_adapter = new DatabaseAdapter(context);
                             db_adapter.open();
                             // Ошибка раньше была в том что передавал старое слово
@@ -285,12 +286,35 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     public void removeSelected(Set<Integer> selectedPositions){
         DatabaseAdapter db_adapter = new DatabaseAdapter(context);
         db_adapter.open();
-        for(int i = selectedPositions.size() - 1; i>=0; i--)
-        {
-            Word word = wordList.get(i);
-            db_adapter.delete(word.getId());
-            wordList.remove(i);
-            notifyItemRemoved(i);
+
+        List<Integer> selectedPositionsList = new ArrayList<>(selectedPositions);
+        Collections.sort(selectedPositionsList, Collections.reverseOrder());
+
+        for (int i : selectedPositionsList){
+            if (i < wordList.size()) {
+                Word word = wordList.get(i);
+                db_adapter.delete(word.getId());
+                wordList.remove(i);
+                notifyItemRemoved(i);
+            }
+        }
+        db_adapter.close();
+    }
+
+    @Override
+    public void onItemFavorite(RecyclerView.ViewHolder viewHolder, int position){
+        Word word = wordList.get(position);
+        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+        db_adapter.open();
+        if (word.getIsFavorite() == 1) {
+            viewHolder.itemView.setBackgroundResource(R.drawable.border);
+            word.setIsFavorite(0);
+            db_adapter.setFavorite(word.getId(), 0);
+        }
+        else {
+            viewHolder.itemView.setBackgroundResource(R.drawable.border_favorite);
+            word.setIsFavorite(1);
+            db_adapter.setFavorite(word.getId(), 1);
         }
         db_adapter.close();
     }

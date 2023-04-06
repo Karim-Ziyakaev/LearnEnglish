@@ -108,6 +108,8 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         FloatingActionButton fab_add = rootView.findViewById(R.id.btn_add);
         fab_add.setOnClickListener(view -> {
             Intent intent = new Intent(context, UserActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            requireActivity().finish();
             startActivity(intent);
         });
 

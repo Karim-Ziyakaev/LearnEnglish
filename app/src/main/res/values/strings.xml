@@ -19,4 +19,5 @@
     <string name="enter_word">Enter word</string>
     <string name="enter_translation">Enter translation</string>
     <string name="hello_blank_fragment">hello blank fragment</string>
+    <string name="english_zero">Английский с нуля</string>
 </resources>

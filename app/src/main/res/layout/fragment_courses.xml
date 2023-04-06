@@ -36,11 +36,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_query_stats_24"/>
+                    android:src="@drawable/enggalaxy" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="For Beginners"
+                    android:text="@string/english_zero"
                     android:textStyle="bold"
                     android:textAlignment="center"/>
             </LinearLayout>
@@ -58,8 +58,8 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true">
-
+            android:clickable="true"
+            android:shape="ring">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

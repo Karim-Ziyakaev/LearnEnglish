@@ -41,6 +41,7 @@ public class Course1Activity extends AppCompatActivity {
         setContentView(R.layout.activity_course1);
 
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.hide();
 
         // начальная инициализация списка
@@ -58,13 +59,10 @@ public class Course1Activity extends AppCompatActivity {
 
                 // получаем выбранный пункт
                 Video selectedVideo = (Video)parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), "Был выбран пункт " + selectedVideo.getTitle(),
-                        Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Course1Activity.this, VideoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 intent.putExtra("id", selectedVideo.getThumbnailResource());
                 startActivity(intent);
-
             }
         };
         videosList.setOnItemClickListener(itemListener);

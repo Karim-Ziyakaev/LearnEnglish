@@ -18,10 +18,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int SCHEMA = 1; // версия базы данных
     static final String TABLE_WORDS = "words"; // название таблицы в бд
     static final String TABLE_RANDOM = "randomwords"; // название таблицы в бд
+    static final String TABLE_STAT = "word_statistics";
     // названия столбцов
     static final String COLUMN_ID = "_id";
+
     static final String COLUMN_WORD = "word";
     static final String COLUMN_TRANSLATE = "translate";
+    static final String COLUMN_IS_FAVORITE = "is_favorite";
+
+    static final String COLUMN_RANDOM_WORD = "random_word";
+    static final String COLUMN_RANDOM_TRANSLATE = "random_translate";
+
+    static final String COLUMN_WORD_ID = "word_id";
+    static final String COLUMN_CORRECT_ANSWERS = "correct_answers";
+    static final String COLUMN_WRONG_ANSWERS = "wrong_answers";
+    static final String COLUMN_TOTAL_ATTEMPTS = "total_attempts";
+
     private Context myContext;
 
     public DatabaseHelper(Context context) {
@@ -34,7 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_WORDS + " (" + COLUMN_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_WORD
-                + " TEXT UNIQUE NOT NULL, " + COLUMN_TRANSLATE + " TEXT NOT NULL);");
+                + " TEXT NOT NULL, " + COLUMN_TRANSLATE + " TEXT NOT NULL, "
+                + "is_favorite INTEGER DEFAULT 0);");
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion,  int newVersion) {
