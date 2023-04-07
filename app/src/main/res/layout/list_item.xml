@@ -23,24 +23,43 @@
         android:textSize="18sp"
         android:layout_gravity="center"/>
 
-    <ImageView
-        android:id="@+id/change_image_view"
+    <ImageButton
+        android:id="@+id/image_button_favorite"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/ic_baseline_edit_24" />
+        android:background="@null"
+        android:src="@drawable/ic_baseline_favorite_border_24"
+        android:contentDescription="@string/image_button_favorite"
+        android:foreground="?attr/selectableItemBackground"/>
 
-    <ImageView
-        android:id="@+id/delete_image_view"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+    
+    <ImageButton
+        android:id="@+id/image_button_more"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/ic_baseline_delete_24" />
+        android:background="@null"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        android:contentDescription="@string/more_image_button"
+        android:foreground="?attr/selectableItemBackground"/>
 
-    <ImageView
-        android:id="@+id/statistics_image_view"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_baseline_query_stats_24" />
+<!--    <ImageView-->
+<!--        android:id="@+id/change_image_view"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:src="@drawable/ic_baseline_edit_24" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/delete_image_view"-->
+<!--        android:layout_marginLeft="5dp"-->
+<!--        android:layout_marginRight="5dp"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:src="@drawable/ic_baseline_delete_24" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/statistics_image_view"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:src="@drawable/ic_baseline_query_stats_24" />-->
 
 </LinearLayout>

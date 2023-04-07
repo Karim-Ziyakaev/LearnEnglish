@@ -1,16 +1,19 @@
 package com.example.LearnEnglish.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.LearnEnglish.R;
@@ -21,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> implements MyItemTouchHelperCallback.ItemTouchHelperAdapter {
@@ -33,18 +37,31 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     private List<Word> wordList;
     private Set<Integer> wSelectedPositions;
     private final LayoutInflater inflater;
+    private Set<Integer> wFavoritePositions;
 
     public WordAdapter(Context context, List<Word> wordList) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.wordList = wordList;
         wSelectedPositions = new HashSet<>();
+        wFavoritePositions = new HashSet<>();
+
+        Integer count = 0;
+        for (Word i : wordList){
+            int fav = i.getIsFavorite();
+            if (fav == 1)
+            {
+                wFavoritePositions.add(count);
+                count++;
+            }
+        }
     }
 
     private OnSelectionChangedListener selectionChangedListener;
 
     public interface OnSelectionChangedListener {
         void onSelectionChanged(Set<Integer> selectedPositions);
+        void onFavoriteChanged();
     }
 
     public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
@@ -79,13 +96,11 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         }
 
         if (showButtons) {
-            holder.changeImageView.setVisibility(View.VISIBLE);
-            holder.deleteImageView.setVisibility(View.VISIBLE);
-            holder.statisticsImageView.setVisibility(View.VISIBLE);
+            holder.favoriteImageButton.setVisibility(View.VISIBLE);
+            holder.moreImageButton.setVisibility(View.VISIBLE);
         } else {
-            holder.changeImageView.setVisibility(View.GONE);
-            holder.deleteImageView.setVisibility(View.GONE);
-            holder.statisticsImageView.setVisibility(View.GONE);
+            holder.favoriteImageButton.setVisibility(View.GONE);
+            holder.moreImageButton.setVisibility(View.GONE);
         }
 
         if (wSelectedPositions.contains(position)) {
@@ -96,6 +111,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         // Элемент не выделен
             currentWord.setIsSelected(false);
             holder.itemView.setBackgroundResource(R.drawable.border);
+        }
+
+        if (wFavoritePositions.contains(position)) {
+            currentWord.setIsFavorite(1);
+            holder.favoriteImageButton.setImageResource(R.drawable.ic_baseline_favorite_24);
+        } else {
+            currentWord.setIsFavorite(0);
+            holder.favoriteImageButton.setImageResource(R.drawable.ic_baseline_favorite_border_24);
         }
     }
 
@@ -110,10 +133,29 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         if (selectionChangedListener != null) {
             selectionChangedListener.onSelectionChanged(wSelectedPositions);
         }
-        notifyItemChanged(position);
+//        notifyItemChanged(position);
     }
 
-    public void clearSelection() {
+    public void toggleFavorite(int position){
+        Word word = wordList.get(position);
+        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+        db_adapter.open();
+        // изза того что все равно избранные сверху находятся в начале списке
+        if (wFavoritePositions.contains(position)) {
+            wFavoritePositions.remove(wFavoritePositions.size()-1);
+            db_adapter.setFavorite(word.getId(), 0);
+        } else {
+            wFavoritePositions.add(wFavoritePositions.size());
+            db_adapter.setFavorite(word.getId(), 1);
+        }
+        if (selectionChangedListener != null) {
+            selectionChangedListener.onFavoriteChanged();
+        }
+        db_adapter.close();
+//        notifyItemChanged(position);
+    }
+
+    public void clearSelections() {
         wSelectedPositions.clear();
         notifyDataSetChanged();
     }
@@ -123,36 +165,24 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         return wordList.size();
     }
 
-    class WordViewHolder extends RecyclerView.ViewHolder {
+    class WordViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener {
+
         TextView wordTextView;
         TextView translationTextView;
-        ImageView deleteImageView;
-        ImageView changeImageView;
-        ImageView statisticsImageView;
+        ImageButton favoriteImageButton;
+        ImageButton moreImageButton;
 
-        public WordViewHolder(View itemView) {
+        public WordViewHolder(View itemView){
             super(itemView);
             wordTextView = itemView.findViewById(R.id.word_text_view);
             translationTextView = itemView.findViewById(R.id.translation_text_view);
-            deleteImageView = itemView.findViewById(R.id.delete_image_view);
-            changeImageView = itemView.findViewById(R.id.change_image_view);
-            statisticsImageView = itemView.findViewById(R.id.statistics_image_view);
+            favoriteImageButton = itemView.findViewById(R.id.image_button_favorite);
+            moreImageButton = itemView.findViewById(R.id.image_button_more);
 
-            deleteImageView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    // Remove the item from the list
-                    int position = getAdapterPosition();
-                    removeByIdx(position);
-                }
-            });
+            moreImageButton.setOnClickListener(this::showPopupMenu);
 
-            changeImageView.setOnClickListener(view -> {
-                int position = getAdapterPosition();
-                clickChange(position);
-            });
-
-            statisticsImageView.setOnClickListener(view -> {
-                // Handle statistics icon click
+            favoriteImageButton.setOnClickListener(v -> {
+                toggleFavorite(getAdapterPosition());
             });
 
             // Устанавливаем слушатель нажатий на элемент
@@ -161,8 +191,33 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 toggleSelection(getAdapterPosition());
             });
         }
+
+        private void showPopupMenu(View view){
+            PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+            popupMenu.inflate(R.menu.popup_menu);
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.show();
+        }
+
+        @SuppressLint("NonConstantResourceId")
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.action_popup_edit:
+                    clickChange(getAdapterPosition());
+                    return true;
+                case R.id.action_popup_delete:
+                    // Remove the item from the list
+                    removeByIdx(getAdapterPosition());
+                    return true;
+                case R.id.action_popup_statistcs:
+                    return true;
+            }
+            return false;
+        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setList(List<Word> wordList) {
         this.wordList = wordList;
         notifyDataSetChanged();
@@ -301,21 +356,21 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         db_adapter.close();
     }
 
-    @Override
-    public void onItemFavorite(RecyclerView.ViewHolder viewHolder, int position){
-        Word word = wordList.get(position);
+    public void setSelectedFavorite(Set<Integer> selectedPositions) {
         DatabaseAdapter db_adapter = new DatabaseAdapter(context);
         db_adapter.open();
-        if (word.getIsFavorite() == 1) {
-            viewHolder.itemView.setBackgroundResource(R.drawable.border);
-            word.setIsFavorite(0);
-            db_adapter.setFavorite(word.getId(), 0);
+
+        for (int i : selectedPositions){
+            if(wordList.get(i).getIsFavorite() == 1) {
+                wFavoritePositions.remove(wFavoritePositions.size()-1);
+                db_adapter.setFavorite(wordList.get(i).getId(), 0);
+            }
+            else{
+                wFavoritePositions.add(wFavoritePositions.size());
+                db_adapter.setFavorite(wordList.get(i).getId(), 1);
+            }
         }
-        else {
-            viewHolder.itemView.setBackgroundResource(R.drawable.border_favorite);
-            word.setIsFavorite(1);
-            db_adapter.setFavorite(word.getId(), 1);
-        }
+
         db_adapter.close();
     }
 }

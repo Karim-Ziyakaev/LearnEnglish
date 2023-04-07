@@ -20,4 +20,7 @@
     <string name="enter_translation">Enter translation</string>
     <string name="hello_blank_fragment">hello blank fragment</string>
     <string name="english_zero">Английский с нуля</string>
+    <string name="more_image_button">Image button for show popup menu</string>
+    <string name="image_button_favorite">Image button for set favorite</string>
+    <string name="favorite">favorite</string>
 </resources>

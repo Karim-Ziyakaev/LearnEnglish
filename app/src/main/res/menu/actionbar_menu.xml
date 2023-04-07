@@ -34,6 +34,13 @@
             app:showAsAction="never" />
     </group>
 
+    <item android:id="@+id/item_favorite"
+        android:title="@string/favorite"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_baseline_favorite_24"
+        android:visible="false"/>
+
     <!-- action button for delete -->
     <item android:title="@string/delete"
         android:id="@+id/item_delete"

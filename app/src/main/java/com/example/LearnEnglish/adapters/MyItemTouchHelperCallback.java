@@ -36,14 +36,8 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        if (direction == ItemTouchHelper.START) {
-            int position = viewHolder.getAdapterPosition();
-            mAdapter.onItemFavorite(viewHolder, position);
-        } else if (direction == ItemTouchHelper.END) {
-            // Свайп вправо, удаляем элемент из базы данных и из адаптера
-            int position = viewHolder.getAdapterPosition();
-            mAdapter.onItemDismiss(position);
-        }
+        int position = viewHolder.getAdapterPosition();
+        mAdapter.onItemDismiss(position);
     }
 
     @Override
@@ -73,7 +67,5 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
         void onItemSelected(RecyclerView.ViewHolder viewHolder);
 
         void onItemClear(RecyclerView.ViewHolder viewHolder);
-
-        void onItemFavorite(RecyclerView.ViewHolder viewHolder, int position);
     }
 }

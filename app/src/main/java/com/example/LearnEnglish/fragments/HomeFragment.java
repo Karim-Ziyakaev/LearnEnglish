@@ -211,11 +211,16 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 return true;
             case R.id.item_delete:
                 adapter.removeSelected(selectedPositions);
-                adapter.clearSelection();
+                adapter.clearSelections();
                 requireActivity().invalidateOptionsMenu();
                 return true;
             case R.id.item_cancel:
-                adapter.clearSelection();
+                adapter.clearSelections();
+                requireActivity().invalidateOptionsMenu();
+                return true;
+            case R.id.item_favorite:
+                adapter.setSelectedFavorite(selectedPositions);
+                adapter.clearSelections();
                 requireActivity().invalidateOptionsMenu();
                 return true;
             default:
@@ -245,6 +250,11 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     }
 
     @Override
+    public void onFavoriteChanged(){
+        requireActivity().invalidateOptionsMenu();
+    }
+
+    @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
@@ -256,6 +266,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
 
         MenuItem itemDelete = menu.findItem(R.id.item_delete);
         MenuItem itemCancel = menu.findItem(R.id.item_cancel);
+        MenuItem itemFavorite = menu.findItem(R.id.item_favorite);
 
         MenuItem itemSearch = menu.findItem(R.id.item_search);
         MenuItem itemSort = menu.findItem(R.id.item_sort);
@@ -285,6 +296,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         if (selectedPositions!=null && !selectedPositions.isEmpty()) {
             itemDelete.setVisible(true);
             itemCancel.setVisible(true);
+            itemFavorite.setVisible(true);
 
             itemSearch.setVisible(false);
             itemSort.setVisible(false);
@@ -297,6 +309,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         } else {
             itemDelete.setVisible(false);
             itemCancel.setVisible(false);
+            itemFavorite.setVisible(false);
 
             itemSearch.setVisible(true);
             itemSort.setVisible(true);

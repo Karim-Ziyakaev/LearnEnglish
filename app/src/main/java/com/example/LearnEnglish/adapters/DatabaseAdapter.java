@@ -10,8 +10,10 @@ import android.util.Log;
 import com.example.LearnEnglish.models.Word;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class DatabaseAdapter {
 
@@ -43,14 +45,21 @@ public class DatabaseAdapter {
 
     public List<Word> getWords(){
         ArrayList<Word> words = new ArrayList<>();
+        ArrayList<Word> favWords = new ArrayList<>();
         Cursor cursor = getAllEntries();
         while (cursor.moveToNext()){
             int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
             String word = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORD));
             String translate = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TRANSLATE));
             int isFavorite = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_FAVORITE));
-            words.add(new Word(id, word, translate, isFavorite));
+
+            if(isFavorite == 1) {
+                favWords.add(new Word(id, word, translate, isFavorite));
+            }
+            else
+                words.add(new Word(id, word, translate, isFavorite));
         }
+        words.addAll(0, favWords);
         cursor.close();
         return words;
     }
@@ -171,5 +180,25 @@ public class DatabaseAdapter {
         cv.put("is_favorite", isFavorite);
         String whereClause = DatabaseHelper.COLUMN_ID + "=" + wordId;
         database.update(DatabaseHelper.TABLE_WORDS, cv, whereClause, null);
+    }
+
+    public Set<Integer> getFavorite(){
+        Set<Integer> favoritePositions = new HashSet<>();
+        /*
+        * Долго размышляя я понял почему i = 0 и i++, потому что я все равно в ресайкл
+        * вью передаю массив отсортированный, где сначала будут избранные, так что
+        * неважно позиция, главное подсчет сколько их
+        */
+        int i = 0;
+        Cursor cursor = getAllEntries();
+        while (cursor.moveToNext()){
+            int isFavorite = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_FAVORITE));
+            if(isFavorite == 1) {
+                favoritePositions.add(i);
+                i++;
+            }
+        }
+        cursor.close();
+        return favoritePositions;
     }
 }
