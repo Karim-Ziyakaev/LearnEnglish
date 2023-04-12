@@ -1,23 +1,45 @@
 package com.example.LearnEnglish.activitys;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.example.LearnEnglish.adapters.DatabaseAdapter;
+import com.example.LearnEnglish.adapters.WordAdapter;
 import com.example.LearnEnglish.fragments.CoursesFragment;
 import com.example.LearnEnglish.fragments.HomeFragment;
 import com.example.LearnEnglish.fragments.ProfileFragment;
 import com.example.LearnEnglish.R;
 import com.example.LearnEnglish.fragments.TestsFragment;
 import com.example.LearnEnglish.adapters.DatabaseHelper;
+import com.example.LearnEnglish.models.Word;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity{
+import java.util.ArrayList;
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnWordsChangeListener{
     boolean firstOpen = true;
+    ArrayList<Word> words;
+
+    @Override
+    public void onWordsChanged(ArrayList<Word> words) {
+        Log.d("onWordsChanged", "SUCCESS");
+        this.words = words;
+    }
+
+    public void onWordsStatChanged(ArrayList<Word> words){
+        this.words = words;
+    }
+
+
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +51,28 @@ public class MainActivity extends AppCompatActivity{
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.create_db();
 
+        DatabaseAdapter db_adapter = new DatabaseAdapter(this);
+        db_adapter.open();
+        words = db_adapter.getWords();
+        db_adapter.close();
+
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.home:
-                    replaceFragment(new HomeFragment());
+                    Log.d("ReplaceFragment", "SUCCESS");
+                    Fragment homeFragment = new HomeFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList("words", words);
+                    homeFragment.setArguments(bundle);
+                    replaceFragment(homeFragment);
                     break;
                 case R.id.tests:
-                    replaceFragment(new TestsFragment());
+                    Fragment testFragment = new TestsFragment();
+                    Bundle bundleTest = new Bundle();
+                    bundleTest.putParcelableArrayList("words", words);
+                    testFragment.setArguments(bundleTest);
+                    replaceFragment(testFragment);
                     break;
                 case R.id.courses:
                     replaceFragment(new CoursesFragment());
@@ -52,7 +89,11 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onStart() {
         if(firstOpen) {
-            replaceFragment(new HomeFragment());
+            Fragment homeFragment = new HomeFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("words", words);
+            homeFragment.setArguments(bundle);
+            replaceFragment(homeFragment);
             firstOpen = false;
         }
         super.onStart();
@@ -60,7 +101,6 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onResume() {
-
         super.onResume();
     }
 
@@ -69,5 +109,12 @@ public class MainActivity extends AppCompatActivity{
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.layout_main, fragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {return;}
+        words = data.getParcelableArrayListExtra("words");
     }
 }

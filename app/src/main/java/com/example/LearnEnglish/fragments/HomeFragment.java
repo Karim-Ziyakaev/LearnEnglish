@@ -3,28 +3,32 @@ package com.example.LearnEnglish.fragments;
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 
 import com.example.LearnEnglish.R;
-import com.example.LearnEnglish.activitys.UserActivity;
 import com.example.LearnEnglish.adapters.DatabaseAdapter;
 import com.example.LearnEnglish.adapters.MyItemTouchHelperCallback;
 import com.example.LearnEnglish.adapters.WordAdapter;
@@ -32,6 +36,7 @@ import com.example.LearnEnglish.models.Word;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -52,6 +57,12 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     List<Word> list_words;
 
     Set<Integer> selectedPositions;
+    private OnWordsChangeListener mListener;
+
+
+    public interface OnWordsChangeListener {
+        void onWordsChanged(ArrayList<Word> words);
+    }
 
     public HomeFragment() {
         // Required empty public constructor
@@ -61,26 +72,32 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
+        try {
+            mListener = (OnWordsChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnWordsChangeListener");
+        }
     }
 
-    //для actionBar
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        if (getArguments() != null && getArguments().containsKey("words")) {
+            list_words = getArguments().getParcelableArrayList("words");
+        }
+        adapter = new WordAdapter(requireContext(), list_words);
+        adapter.setOnSelectionChangedListener(this);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
-        db_adapter.open();
-
-        list_words = db_adapter.getWords();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        recyclerView = rootView.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         settings = requireContext().getSharedPreferences("Show", Context.MODE_PRIVATE);
 
-        adapter = new WordAdapter(context, list_words);
-        adapter.setOnSelectionChangedListener(this);
         recyclerView.setAdapter(adapter);
 
         showWord = settings.getBoolean("showWord", true);
@@ -95,25 +112,63 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerView);
 
-        db_adapter.close();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        recyclerView = rootView.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
         FloatingActionButton fab_add = rootView.findViewById(R.id.btn_add);
         fab_add.setOnClickListener(view -> {
-            Intent intent = new Intent(context, UserActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            requireActivity().finish();
-            startActivity(intent);
+            addDialog();
         });
 
         return rootView;
+    }
+
+    private void addDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.add_word_dialog, null);
+        final EditText wordEditText = dialogView.findViewById(R.id.word_edit_text);
+        final EditText translationEditText = dialogView.findViewById(R.id.translation_edit_text);
+        final Button addButton = dialogView.findViewById(R.id.add_button);
+        final Button randomButton = dialogView.findViewById(R.id.random_button);
+        final TextView successText = dialogView.findViewById(R.id.success_text);
+        builder.setView(dialogView)
+                .setPositiveButton("Close", null)
+                .create()
+                .show();
+        addButton.setOnClickListener(view -> {
+            String s_word = wordEditText.getText().toString().trim();
+            String s_translate = translationEditText.getText().toString().trim();
+
+            if (s_word.isEmpty() || s_translate.isEmpty()) {
+                successText.setVisibility(View.INVISIBLE);
+                if (s_word.isEmpty() && s_translate.isEmpty()) {
+                    wordEditText.setError("Error, empty word");
+                    translationEditText.setError("Error, empty translation");
+                }
+                else if (s_word.isEmpty())
+                    wordEditText.setError("Error, empty translation");
+                else
+                    translationEditText.setError("Error, empty translation");
+            } else {
+                s_word = s_word.substring(0, 1).toUpperCase() + s_word.substring(1).toLowerCase();
+                s_translate = s_translate.substring(0, 1).toUpperCase() + s_translate.substring(1).toLowerCase();
+                list_words.add(new Word(-1, s_word, s_translate, 0));
+                DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+                db_adapter.open();
+                db_adapter.insert(list_words.get(list_words.size()-1));
+                db_adapter.close();
+                adapter.setList(list_words);
+                wordEditText.setText("");
+                translationEditText.setText("");
+                successText.setVisibility(View.VISIBLE);
+
+            }
+        });
+        randomButton.setOnClickListener(view -> {
+            DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+            db_adapter.open();
+            Word word = db_adapter.getRandomWord();
+            db_adapter.close();
+            wordEditText.setText(word.getWord());
+            translationEditText.setText(word.getTranslate());
+        });
     }
 
     @Override
@@ -163,7 +218,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         return filteredList;
     }
 
-    @SuppressLint("NonConstantResourceId")
+    @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch(id){
@@ -211,6 +266,12 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 return true;
             case R.id.item_delete:
                 adapter.removeSelected(selectedPositions);
+                List<Integer> selectedPositionsList = new ArrayList<>(selectedPositions);
+                Collections.sort(selectedPositionsList, Collections.reverseOrder());
+                for(int i: selectedPositionsList){
+                    list_words.remove(i);
+                }
+                adapter.setList(list_words);
                 adapter.clearSelections();
                 requireActivity().invalidateOptionsMenu();
                 return true;
@@ -220,6 +281,9 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 return true;
             case R.id.item_favorite:
                 adapter.setSelectedFavorite(selectedPositions);
+                refreshList();
+                adapter.setList(list_words);
+                mListener.onWordsChanged((ArrayList<Word>) list_words);
                 adapter.clearSelections();
                 requireActivity().invalidateOptionsMenu();
                 return true;
@@ -250,19 +314,43 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
     }
 
     @Override
-    public void onFavoriteChanged(){
-        requireActivity().invalidateOptionsMenu();
+    public void onFavoriteChanged(int position){
+        Word word = list_words.remove(position);
+        boolean isMoved = false;
+        int j = position;
+        if(word.getIsFavorite() == 1) {
+            while (!isMoved) {
+                isMoved = true;
+                if (j != 0) {
+                    if (word.getId() < list_words.get(j - 1).getId() || list_words.get(j - 1).getIsFavorite() == 0) {
+                        j--;
+                        isMoved = false;
+                    } else {
+                        list_words.add(j, word);
+                    }
+                } else {
+                    list_words.add(j, word);
+                }
+            }
+        }
+        else {
+            while (!isMoved) {
+                isMoved = true;
+                if (j!=0 && word.getId() < list_words.get(j-1).getId() && list_words.get(j-1).getIsFavorite() == 0) {
+                    j--;
+                    isMoved = false;
+                } else if (j == 0 || word.getId() > list_words.get(j-1).getId() || list_words.get(j-1).getIsFavorite() == 1) {
+                    list_words.add(j, word);
+                }
+            }
+        }
+        adapter.setList(list_words);
+        mListener.onWordsChanged((ArrayList<Word>) list_words);
     }
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        // Чтобы при удалении элементы на вьюхе убирались
-        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
-        db_adapter.open();
-        list_words = db_adapter.getWords();
-        adapter.setList(list_words);
 
         MenuItem itemDelete = menu.findItem(R.id.item_delete);
         MenuItem itemCancel = menu.findItem(R.id.item_cancel);
@@ -322,4 +410,44 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mListener.onWordsChanged((ArrayList<Word>) list_words);
+    }
+
+    public void refreshList(){
+        ArrayList<Word> temp = new ArrayList<>(list_words);
+        for(int i = 0; i < list_words.size(); i++){
+            boolean isMoved = false;
+            Word word = temp.remove(i);
+            int j = i;
+            if(word.getIsFavorite() == 1){
+                while(!isMoved){
+                    isMoved = true;
+                    if(j!=0){
+                        if(word.getId() < temp.get(j-1).getId() || temp.get(j-1).getIsFavorite() == 0) {
+                            j--;
+                            isMoved = false;
+                        } else {
+                            temp.add(j, word);
+                        }
+                    }else {
+                        temp.add(j, word);
+                    }
+                }
+            } else {
+                while (!isMoved) {
+                    isMoved = true;
+                    if (j!=0 && word.getId() < temp.get(j-1).getId() && temp.get(j-1).getIsFavorite() == 0) {
+                        j--;
+                        isMoved = false;
+                    } else if (j == 0 || word.getId() > temp.get(j-1).getId() || temp.get(j-1).getIsFavorite() == 1) {
+                        temp.add(j, word);
+                    }
+                }
+            }
+        }
+        list_words = temp;
+    }
 }

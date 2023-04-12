@@ -23,4 +23,10 @@
     <string name="more_image_button">Image button for show popup menu</string>
     <string name="image_button_favorite">Image button for set favorite</string>
     <string name="favorite">favorite</string>
+    <string name="successfully_added">Successfully added</string>
+    <string name="get_random_word">get random word</string>
+    <string name="check">Check</string>
+    <string name="answer">Answer</string>
+    <string name="correct_incorrect">Correct/Incorrect</string>
+    <string name="learn_progress">Learn progress</string>
 </resources>

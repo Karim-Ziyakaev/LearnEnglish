@@ -15,7 +15,7 @@
         android:layout_above="@id/bottom_navigation">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardTest1"
+            android:id="@+id/cardTestRUEN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"

@@ -33,17 +33,16 @@ public class DatabaseAdapter {
         dbHelper.close();
     }
 
-    private Cursor getAllEntriesStat(){
-        String[] colums = new String[] {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_WORD_ID, DatabaseHelper.COLUMN_CORRECT_ANSWERS, DatabaseHelper.COLUMN_WRONG_ANSWERS, DatabaseHelper.COLUMN_TOTAL_ATTEMPTS};
-        return database.query(DatabaseHelper.TABLE_STAT, colums, null, null, null, null, null);
-    }
-
     private Cursor getAllEntries(){
-        String[] columns = new String[] {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_WORD, DatabaseHelper.COLUMN_TRANSLATE, DatabaseHelper.COLUMN_IS_FAVORITE};
+        String[] columns = new String[] {
+                DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_WORD, DatabaseHelper.COLUMN_TRANSLATE,
+                DatabaseHelper.COLUMN_IS_FAVORITE, DatabaseHelper.COLUMN_CORRECT_ANSWERS, DatabaseHelper.COLUMN_WRONG_ANSWERS,
+                DatabaseHelper.COLUMN_TOTAL_ATTEMPTS
+        };
         return  database.query(DatabaseHelper.TABLE_WORDS, columns, null, null, null, null, null);
     }
 
-    public List<Word> getWords(){
+    public ArrayList<Word> getWords(){
         ArrayList<Word> words = new ArrayList<>();
         ArrayList<Word> favWords = new ArrayList<>();
         Cursor cursor = getAllEntries();
@@ -52,12 +51,15 @@ public class DatabaseAdapter {
             String word = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORD));
             String translate = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TRANSLATE));
             int isFavorite = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_FAVORITE));
+            int correctAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_CORRECT_ANSWERS));
+            int wrongAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WRONG_ANSWERS));
+            int totalAttemps = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS));
 
             if(isFavorite == 1) {
-                favWords.add(new Word(id, word, translate, isFavorite));
+                favWords.add(new Word(id, word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps));
             }
             else
-                words.add(new Word(id, word, translate, isFavorite));
+                words.add(new Word(id, word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps));
         }
         words.addAll(0, favWords);
         cursor.close();
@@ -75,8 +77,13 @@ public class DatabaseAdapter {
         if(cursor.moveToFirst()){
             String s_word = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORD));
             String translate = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TRANSLATE));
+
             int isFavorite = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_FAVORITE));
-            word = new Word(id, s_word, translate, isFavorite);
+            int correctAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_CORRECT_ANSWERS));
+            int wrongAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WRONG_ANSWERS));
+            int totalAttemps = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS));
+
+            word = new Word(id, s_word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps);
         }
         cursor.close();
         return  word;
@@ -85,7 +92,6 @@ public class DatabaseAdapter {
     public long insert(Word word){
 
         ContentValues cv = new ContentValues();
-        ContentValues cvForStatTable = new ContentValues();
 
         String s_word = word.getWord();
         s_word = s_word.substring(0,1).toUpperCase() + s_word.substring(1).toLowerCase();
@@ -94,19 +100,8 @@ public class DatabaseAdapter {
 
         cv.put(DatabaseHelper.COLUMN_WORD, s_word);
         cv.put(DatabaseHelper.COLUMN_TRANSLATE, s_translate);
-
-        database.insert(DatabaseHelper.TABLE_WORDS, null, cv);
-
-        Cursor cursor = getAllEntries();
-        int id = 0;
-        while (cursor.moveToNext()){
-            id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
-        }
-        cursor.close();
         
-        cvForStatTable.put(DatabaseHelper.COLUMN_WORD_ID, id);
-        
-        return  database.insert(DatabaseHelper.TABLE_STAT, null, cvForStatTable);
+        return database.insert(DatabaseHelper.TABLE_WORDS, null, cv);
     }
 
     public long delete(long wordId){
@@ -122,13 +117,6 @@ public class DatabaseAdapter {
 
         String whereClause = DatabaseHelper.COLUMN_ID + "=" + word.getId();
         ContentValues cv = new ContentValues();
-        ContentValues cvForStatTable = new ContentValues();
-
-        cvForStatTable.put(DatabaseHelper.COLUMN_CORRECT_ANSWERS, 0);
-        cvForStatTable.put(DatabaseHelper.COLUMN_WRONG_ANSWERS, 0);
-        cvForStatTable.put(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS, 0);
-
-        database.update(DatabaseHelper.TABLE_STAT, cvForStatTable, whereClause, null);
 
         String s_word = word.getWord();
         s_word = s_word.substring(0,1).toUpperCase() + s_word.substring(1).toLowerCase();
@@ -137,6 +125,10 @@ public class DatabaseAdapter {
 
         cv.put(DatabaseHelper.COLUMN_WORD, s_word);
         cv.put(DatabaseHelper.COLUMN_TRANSLATE, s_translate);
+        cv.put(DatabaseHelper.COLUMN_CORRECT_ANSWERS, word.getCorrectAttempts());
+        cv.put(DatabaseHelper.COLUMN_WRONG_ANSWERS, word.getWrongAttempts());
+        cv.put(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS, word.getAttempts());
+
         long edtCount = database.update(DatabaseHelper.TABLE_WORDS, cv, whereClause, null);
         Log.d("mLog", "changed rows count = " + edtCount);
         return edtCount;
@@ -164,16 +156,6 @@ public class DatabaseAdapter {
         return  word;
     }
 
-//    public int tempGetID(Word word){
-//        int id = 0;
-//        String query = String.format("SELECT * FROM %s WHERE %s=?",DatabaseHelper.TABLE_STAT, DatabaseHelper.COLUMN_ID);
-//        Cursor cursor = database.rawQuery(query, new String[]{ String.valueOf(word.getId())});
-//        if(cursor.moveToFirst()) {
-//            id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WORD_ID));
-//        }
-//        cursor.close();
-//        return id;
-//    }
 
     public void setFavorite(long wordId, int isFavorite){
         ContentValues cv = new ContentValues();
@@ -201,4 +183,6 @@ public class DatabaseAdapter {
         cursor.close();
         return favoritePositions;
     }
+
+
 }

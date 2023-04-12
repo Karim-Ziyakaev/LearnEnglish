@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -61,7 +62,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
     public interface OnSelectionChangedListener {
         void onSelectionChanged(Set<Integer> selectedPositions);
-        void onFavoriteChanged();
+        void onFavoriteChanged(int position);
     }
 
     public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
@@ -110,6 +111,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         } else {
         // Элемент не выделен
             currentWord.setIsSelected(false);
+            currentWord.setIsSelected(false);
             holder.itemView.setBackgroundResource(R.drawable.border);
         }
 
@@ -144,12 +146,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         if (wFavoritePositions.contains(position)) {
             wFavoritePositions.remove(wFavoritePositions.size()-1);
             db_adapter.setFavorite(word.getId(), 0);
+            word.setIsFavorite(0);
         } else {
             wFavoritePositions.add(wFavoritePositions.size());
             db_adapter.setFavorite(word.getId(), 1);
+            word.setIsFavorite(1);
         }
         if (selectionChangedListener != null) {
-            selectionChangedListener.onFavoriteChanged();
+            selectionChangedListener.onFavoriteChanged(position);
         }
         db_adapter.close();
 //        notifyItemChanged(position);
@@ -211,6 +215,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                     removeByIdx(getAdapterPosition());
                     return true;
                 case R.id.action_popup_statistcs:
+                    clickStatistics(getAdapterPosition());
                     return true;
             }
             return false;
@@ -221,6 +226,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     public void setList(List<Word> wordList) {
         this.wordList = wordList;
         notifyDataSetChanged();
+    }
+
+    public void addItem(Word word) {
+        wordList.add(word);
     }
 
     public void setShowTranslation(boolean showTranslation) {
@@ -323,6 +332,28 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 .show();
     }
 
+    private void clickStatistics(int position){
+        Word word = wordList.get(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.statistics_word_dialog, null);
+        final TextView wordText = dialogView.findViewById(R.id.word_text);
+        final TextView kdText = dialogView.findViewById(R.id.kd_text);
+        final TextView percentProgressText = dialogView.findViewById(R.id.percent_progress_text);
+        final ProgressBar progressBar = dialogView.findViewById(R.id.progress_bar);
+        wordText.setText(word.getWord());
+        float kd =(float) word.getCorrectAttempts()/(word.getWrongAttempts()==0?1:word.getWrongAttempts());
+        float percent = (kd/10) * 100;
+        String strKd = String.valueOf(kd);
+        String strPercent = percent + "%";
+        kdText.setText(strKd);
+        percentProgressText.setText(strPercent);
+        progressBar.setProgress((int)percent);
+        builder.setView(dialogView)
+                .setNeutralButton("Ok", null)
+                .create()
+                .show();
+    }
+
     public void removeByIdx(int position)
     {
         // Get the current word and translation
@@ -364,13 +395,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
             if(wordList.get(i).getIsFavorite() == 1) {
                 wFavoritePositions.remove(wFavoritePositions.size()-1);
                 db_adapter.setFavorite(wordList.get(i).getId(), 0);
+                wordList.get(i).setIsFavorite(0);
             }
             else{
                 wFavoritePositions.add(wFavoritePositions.size());
                 db_adapter.setFavorite(wordList.get(i).getId(), 1);
+                wordList.get(i).setIsFavorite(1);
             }
         }
-
         db_adapter.close();
     }
 }
