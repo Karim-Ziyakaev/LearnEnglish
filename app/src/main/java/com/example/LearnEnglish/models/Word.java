@@ -72,7 +72,7 @@ public class Word implements Parcelable {
         return this.word;
     }
 
-    public void SetTranslate(String translate){
+    public void setTranslate(String translate){
         this.translate = translate;
     }
     public String getTranslate(){

@@ -129,7 +129,16 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         final Button randomButton = dialogView.findViewById(R.id.random_button);
         final TextView successText = dialogView.findViewById(R.id.success_text);
         builder.setView(dialogView)
-                .setPositiveButton("Close", null)
+sa                .setPositiveButton("Close", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+                        db_adapter.open();
+                        list_words = db_adapter.getWords();
+                        db_adapter.close();
+                        adapter.setList(list_words);
+                    }
+                })
                 .create()
                 .show();
         addButton.setOnClickListener(view -> {
@@ -149,8 +158,8 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             } else {
                 s_word = s_word.substring(0, 1).toUpperCase() + s_word.substring(1).toLowerCase();
                 s_translate = s_translate.substring(0, 1).toUpperCase() + s_translate.substring(1).toLowerCase();
-                list_words.add(new Word(-1, s_word, s_translate, 0));
                 DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+                list_words.add(new Word(-1, s_word, s_translate, 0));
                 db_adapter.open();
                 db_adapter.insert(list_words.get(list_words.size()-1));
                 db_adapter.close();
@@ -271,7 +280,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 for(int i: selectedPositionsList){
                     list_words.remove(i);
                 }
-                adapter.setList(list_words);
+                mListener.onWordsChanged((ArrayList<Word>) list_words);
                 adapter.clearSelections();
                 requireActivity().invalidateOptionsMenu();
                 return true;
@@ -319,32 +328,49 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         boolean isMoved = false;
         int j = position;
         if(word.getIsFavorite() == 1) {
+            if (j == list_words.size())
+                j--;
             while (!isMoved) {
                 isMoved = true;
-                if (j != 0) {
-                    if (word.getId() < list_words.get(j - 1).getId() || list_words.get(j - 1).getIsFavorite() == 0) {
-                        j--;
-                        isMoved = false;
-                    } else {
-                        list_words.add(j, word);
-                    }
+                if (j >= 0 && (word.getId() < list_words.get(j).getId() || list_words.get(j).getIsFavorite() == 0)) {
+                    j--;
+                    isMoved = false;
                 } else {
-                    list_words.add(j, word);
+                    if (j == -1)
+                        list_words.add(0, word);
+                    else
+                        list_words.add(j+1, word);
                 }
             }
         }
         else {
             while (!isMoved) {
                 isMoved = true;
-                if (j!=0 && word.getId() < list_words.get(j-1).getId() && list_words.get(j-1).getIsFavorite() == 0) {
-                    j--;
+                if (j < list_words.size() && (list_words.get(j).getIsFavorite() == 1 || list_words.get(j).getId()<word.getId())){
+                    j++;
                     isMoved = false;
-                } else if (j == 0 || word.getId() > list_words.get(j-1).getId() || list_words.get(j-1).getIsFavorite() == 1) {
-                    list_words.add(j, word);
+                }
+                else{
+                    if(j == list_words.size())
+                        list_words.add(word);
+                    else
+                        list_words.add(j, word);
                 }
             }
         }
         adapter.setList(list_words);
+        mListener.onWordsChanged((ArrayList<Word>) list_words);
+    }
+
+    @Override
+    public void onWordChangedPosition(int newPos) {
+        refreshList();
+        adapter.setList(list_words);
+        mListener.onWordsChanged((ArrayList<Word>) list_words);
+    }
+
+    @Override
+    public void onWordDeleted() {
         mListener.onWordsChanged((ArrayList<Word>) list_words);
     }
 

@@ -125,6 +125,7 @@ public class DatabaseAdapter {
 
         cv.put(DatabaseHelper.COLUMN_WORD, s_word);
         cv.put(DatabaseHelper.COLUMN_TRANSLATE, s_translate);
+        cv.put(DatabaseHelper.COLUMN_IS_FAVORITE, word.getIsFavorite());
         cv.put(DatabaseHelper.COLUMN_CORRECT_ANSWERS, word.getCorrectAttempts());
         cv.put(DatabaseHelper.COLUMN_WRONG_ANSWERS, word.getWrongAttempts());
         cv.put(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS, word.getAttempts());

@@ -40,6 +40,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     private final LayoutInflater inflater;
     private Set<Integer> wFavoritePositions;
 
+    private boolean isFirstMove = true;
+    private int oldPosForMove;
+    private int newPosForMove;
+
     public WordAdapter(Context context, List<Word> wordList) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -63,12 +67,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     public interface OnSelectionChangedListener {
         void onSelectionChanged(Set<Integer> selectedPositions);
         void onFavoriteChanged(int position);
+        void onWordChangedPosition(int newPos);
+        void onWordDeleted();
     }
 
     public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
         this.selectionChangedListener = listener;
     }
-
 
     @NonNull
     @Override
@@ -230,6 +235,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
     public void addItem(Word word) {
         wordList.add(word);
+        notifyItemInserted(wordList.size()-1);
     }
 
     public void setShowTranslation(boolean showTranslation) {
@@ -256,20 +262,30 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
+        if(isFirstMove){
+            oldPosForMove = fromPosition;
+            isFirstMove = false;
+        }
+        newPosForMove = toPosition;
         Collections.swap(wordList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
     public void onItemDismiss(int position) {
-        Word word = wordList.get(position);
-        DatabaseAdapter db_adapter = new DatabaseAdapter(context);
-        db_adapter.open();
-        //надо именно гетИд потому что айди в бд другое чем в листе
-        db_adapter.delete(word.getId());
-        db_adapter.close();
-        wordList.remove(position);
-        notifyItemRemoved(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Delete")
+                .setMessage(wordList.get(position).getWord() + "?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        removeByIdx(position);
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .create()
+                .show();
+        notifyItemChanged(position);
     }
 
     @Override
@@ -279,6 +295,102 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
     @Override
     public void onItemClear(RecyclerView.ViewHolder viewHolder) {
+        isFirstMove = true;
+//        newPosForMove = viewHolder.getAdapterPosition();
+        if (oldPosForMove != newPosForMove) {
+
+            DatabaseAdapter db_adapter = new DatabaseAdapter(context);
+            db_adapter.open();
+
+            if (oldPosForMove < newPosForMove) {
+                Word temp = new Word(
+                        wordList.get(newPosForMove).getId(),
+                        wordList.get(newPosForMove).getWord(),
+                        wordList.get(newPosForMove).getTranslate(),
+                        wordList.get(newPosForMove).getIsFavorite(),
+                        wordList.get(newPosForMove).getCorrectAttempts(),
+                        wordList.get(newPosForMove).getWrongAttempts(),
+                        wordList.get(newPosForMove).getAttempts());
+
+                wordList.get(newPosForMove).setWord(wordList.get(oldPosForMove).getWord());
+                wordList.get(newPosForMove).setTranslate(wordList.get(oldPosForMove).getTranslate());
+                wordList.get(newPosForMove).setIsFavorite(wordList.get(oldPosForMove).getIsFavorite());
+                wordList.get(newPosForMove).setCorrectAttempts(wordList.get(oldPosForMove).getCorrectAttempts());
+                wordList.get(newPosForMove).setWrongAttempts(wordList.get(oldPosForMove).getWrongAttempts());
+                wordList.get(newPosForMove).setAttempts(wordList.get(oldPosForMove).getAttempts());
+
+                db_adapter.update(wordList.get(newPosForMove));
+
+                for (int i = newPosForMove - 1; i >= oldPosForMove; i--) {
+                    Word oldWord = new Word(
+                            wordList.get(i).getId(),
+                            wordList.get(i).getWord(),
+                            wordList.get(i).getTranslate(),
+                            wordList.get(i).getIsFavorite(),
+                            wordList.get(i).getCorrectAttempts(),
+                            wordList.get(i).getWrongAttempts(),
+                            wordList.get(i).getAttempts());
+
+                    wordList.get(i).setWord(temp.getWord());
+                    wordList.get(i).setTranslate(temp.getTranslate());
+                    wordList.get(i).setIsFavorite(temp.getIsFavorite());
+                    wordList.get(i).setCorrectAttempts(temp.getCorrectAttempts());
+                    wordList.get(i).setWrongAttempts(temp.getWrongAttempts());
+                    wordList.get(i).setAttempts(temp.getAttempts());
+
+                    db_adapter.update(wordList.get(i));
+
+                    temp = oldWord;
+                }
+            } else if (oldPosForMove > newPosForMove) {
+                Word temp = new Word(
+                        wordList.get(newPosForMove).getId(),
+                        wordList.get(newPosForMove).getWord(),
+                        wordList.get(newPosForMove).getTranslate(),
+                        wordList.get(newPosForMove).getIsFavorite(),
+                        wordList.get(newPosForMove).getCorrectAttempts(),
+                        wordList.get(newPosForMove).getWrongAttempts(),
+                        wordList.get(newPosForMove).getAttempts());
+
+                wordList.get(newPosForMove).setWord(wordList.get(oldPosForMove).getWord());
+                wordList.get(newPosForMove).setTranslate(wordList.get(oldPosForMove).getTranslate());
+                wordList.get(newPosForMove).setIsFavorite(wordList.get(oldPosForMove).getIsFavorite());
+                wordList.get(newPosForMove).setCorrectAttempts(wordList.get(oldPosForMove).getCorrectAttempts());
+                wordList.get(newPosForMove).setWrongAttempts(wordList.get(oldPosForMove).getWrongAttempts());
+                wordList.get(newPosForMove).setAttempts(wordList.get(oldPosForMove).getAttempts());
+
+                db_adapter.update(wordList.get(newPosForMove));
+
+                for (int i = newPosForMove + 1; i <= oldPosForMove; i++) {
+                    Word oldWord = new Word(
+                            wordList.get(i).getId(),
+                            wordList.get(i).getWord(),
+                            wordList.get(i).getTranslate(),
+                            wordList.get(i).getIsFavorite(),
+                            wordList.get(i).getCorrectAttempts(),
+                            wordList.get(i).getWrongAttempts(),
+                            wordList.get(i).getAttempts());
+
+                    wordList.get(i).setWord(temp.getWord());
+                    wordList.get(i).setTranslate(temp.getTranslate());
+                    wordList.get(i).setIsFavorite(temp.getIsFavorite());
+                    wordList.get(i).setCorrectAttempts(temp.getCorrectAttempts());
+                    wordList.get(i).setWrongAttempts(temp.getWrongAttempts());
+                    wordList.get(i).setAttempts(temp.getAttempts());
+
+                    db_adapter.update(wordList.get(i));
+
+                    temp = oldWord;
+                }
+            }
+            db_adapter.close();
+
+            if (selectionChangedListener != null) {
+                selectionChangedListener.onWordChangedPosition(newPosForMove);
+            }
+        }
+        newPosForMove = -1;
+        oldPosForMove = -1;
         viewHolder.itemView.setBackgroundResource(R.drawable.border);
     }
 
@@ -337,10 +449,16 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.statistics_word_dialog, null);
         final TextView wordText = dialogView.findViewById(R.id.word_text);
+        final TextView correctText = dialogView.findViewById(R.id.correct_text);
+        final TextView wrongText = dialogView.findViewById(R.id.wrong_text);
+        final TextView totalText = dialogView.findViewById(R.id.total_text);
         final TextView kdText = dialogView.findViewById(R.id.kd_text);
         final TextView percentProgressText = dialogView.findViewById(R.id.percent_progress_text);
         final ProgressBar progressBar = dialogView.findViewById(R.id.progress_bar);
         wordText.setText(word.getWord());
+        correctText.setText("Correct attempts: " + word.getCorrectAttempts());
+        wrongText.setText("Wrong attempts: " + word.getWrongAttempts());
+        totalText.setText("Total attempts: " + word.getAttempts());
         float kd =(float) word.getCorrectAttempts()/(word.getWrongAttempts()==0?1:word.getWrongAttempts());
         float percent = (kd/10) * 100;
         String strKd = String.valueOf(kd);
@@ -365,8 +483,12 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         db_adapter.delete(word.getId());
         db_adapter.close();
         wordList.remove(position);
+        if (selectionChangedListener != null) {
+            selectionChangedListener.onWordDeleted();
+        }
         // Notify the adapter that the data has changed
         notifyItemRemoved(position);
+
     }
 
     public void removeSelected(Set<Integer> selectedPositions){

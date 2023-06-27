@@ -7,15 +7,18 @@
     tools:context=".fragments.TestsFragment">
 
     <GridLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:id="@+id/gridTests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:rowCount="2"
         android:columnCount="2"
-        android:layout_margin="20dp"
-        android:layout_above="@id/bottom_navigation">
+        android:layout_above="@id/cardTestCombo">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardTestRUEN"
+            android:id="@+id/cardTestENRU"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
@@ -43,6 +46,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardTestChoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
@@ -69,13 +73,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="For Beginners"
+                    android:text="Choice"
                     android:textStyle="bold"
                     android:textAlignment="center"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardTestRUEN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
@@ -102,13 +107,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="For Beginners"
+                    android:text="EN/RU"
                     android:textStyle="bold"
                     android:textAlignment="center"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardTestChoiceRu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
@@ -132,10 +138,37 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:src="@drawable/test1"/>
-
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </GridLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardTestCombo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_navigation"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/test1" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

@@ -2,8 +2,14 @@ package com.example.LearnEnglish.fragments;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,28 +18,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import com.example.LearnEnglish.R;
 import com.example.LearnEnglish.models.Word;
 
-import java.util.Locale;
-import java.util.Objects;
-
-public class TestRUENFragment extends Fragment {
+public class TestENRUFragment extends Fragment {
     private Word mWord;
     private TextView wordText;
     private EditText wordEditText;
     private Button checkButton;
     private CardView cardView;
 
-    private OnFragmentAnswerListener mListener;
+    private TestENRUFragment.OnFragmentAnswerListener mListener;
 
-    public void setOnFragmentAnswerListener(OnFragmentAnswerListener listener) {
+    public void setOnFragmentAnswerListener(TestENRUFragment.OnFragmentAnswerListener listener) {
         mListener = listener;
     }
 
@@ -44,16 +41,16 @@ public class TestRUENFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentAnswerListener) {
-            mListener = (OnFragmentAnswerListener) context;
+        if (context instanceof TestENRUFragment.OnFragmentAnswerListener) {
+            mListener = (TestENRUFragment.OnFragmentAnswerListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentAnswerListener");
         }
     }
 
-    public static TestRUENFragment getInstance(Word word) {
-        TestRUENFragment fragment = new TestRUENFragment();
+    public static TestENRUFragment getInstance(Word word) {
+        TestENRUFragment fragment = new TestENRUFragment();
         if (word!=null)
         {
             Bundle bundle = new Bundle();
@@ -63,7 +60,8 @@ public class TestRUENFragment extends Fragment {
         return fragment;
     }
 
-    public TestRUENFragment() {
+    public TestENRUFragment() {
+        // Required empty public constructor
     }
 
     @Override
@@ -74,7 +72,7 @@ public class TestRUENFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_test_ruen, container, false);
+        return inflater.inflate(R.layout.fragment_test_enru, container, false);
     }
 
     @Override
@@ -92,16 +90,16 @@ public class TestRUENFragment extends Fragment {
 
     private void init(){
         if(mWord!=null){
-            wordText.setText(mWord.getTranslate());
+            wordText.setText(mWord.getWord());
         }
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getTranslate().toLowerCase())) {
+                if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getWord().toLowerCase())){
                     Toast.makeText(requireContext(), "Please type a answer!", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getWord().toLowerCase())) {
+                    if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getTranslate().toLowerCase())) {
                         wordText.setText("Заебись");
                         wordText.setTextSize(50);
                         wordText.setTextColor(Color.GREEN);

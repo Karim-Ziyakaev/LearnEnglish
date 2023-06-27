@@ -2,11 +2,11 @@ package com.example.LearnEnglish.models;
 
 public class Video {
     private String title;   // название видева
-    private String thumbnailResource;  // пикча
+    private String id;  // пикча
 
-    public Video(String title, String thumbnailResourse) {
+    public Video(String title, String id) {
         this.title = title;
-        this.thumbnailResource = thumbnailResourse;
+        this.id = id;
     }
 
     public String getTitle(){
@@ -17,11 +17,11 @@ public class Video {
         this.title = title;
     }
 
-    public String getThumbnailResource(){
-        return this.thumbnailResource;
+    public String getId(){
+        return this.id;
     }
 
-    public void setThumbnailResource(String thumbnailResource){
-        this.thumbnailResource = thumbnailResource;
+    public void setId(String thumbnailResource){
+        this.id = thumbnailResource;
     }
 }

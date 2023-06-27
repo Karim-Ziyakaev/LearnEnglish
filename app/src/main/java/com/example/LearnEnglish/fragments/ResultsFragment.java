@@ -87,7 +87,7 @@ public class ResultsFragment extends Fragment {
         float progressPercent = (kd/10)*100;
         float oldProgressPercent = 0;
         progressBar.setProgress((int)progressPercent);
-        if(Objects.equals(mWord.getTranslate().toLowerCase(), answer.toLowerCase())){
+        if(Objects.equals(mWord.getTranslate().toLowerCase().trim(), answer.toLowerCase().trim()) || Objects.equals(mWord.getWord().toLowerCase().trim(), answer.toLowerCase().trim())){
             stonksImage.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24);
             // реализация setSecondaryProgress, чтобы было видно прогресс изучения
             oldKd = (float)(correct - 1)/wrong;

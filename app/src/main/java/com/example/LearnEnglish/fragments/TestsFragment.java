@@ -44,14 +44,40 @@ public class TestsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_tests, container, false);
         requireActivity().setTitle("Tests");
 
+        Intent intent = new Intent(requireContext(), TestActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putParcelableArrayListExtra("words", words);
+
         CardView cardTestRUEN = rootView.findViewById(R.id.cardTestRUEN);
         cardTestRUEN.setOnClickListener(view -> {
-            Intent intent = new Intent(requireContext(), TestActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("selectedTest", "RUEN");
-            intent.putParcelableArrayListExtra("words", words);
             startActivityForResult(intent, 1);
         });
+
+        CardView cardTestENRU = rootView.findViewById(R.id.cardTestENRU);
+        cardTestENRU.setOnClickListener(view -> {
+            intent.putExtra("selectedTest", "ENRU");
+            startActivityForResult(intent, 1);
+        });
+
+        CardView cardTestChoice = rootView.findViewById(R.id.cardTestChoice);
+        cardTestChoice.setOnClickListener(view -> {
+            intent.putExtra("selectedTest", "Choice");
+            startActivityForResult(intent, 1);
+        });
+
+        CardView cardTestChoiceRu = rootView.findViewById(R.id.cardTestChoiceRu);
+        cardTestChoiceRu.setOnClickListener(view -> {
+            intent.putExtra("selectedTest", "ChoiceRu");
+            startActivityForResult(intent, 1);
+        });
+
+        CardView cardTestCombo = rootView.findViewById(R.id.cardTestCombo);
+        cardTestCombo.setOnClickListener(view -> {
+            intent.putExtra("selectedTest", "Combo");
+            startActivityForResult(intent, 1);
+        });
+
         return rootView;
     }
 
@@ -60,5 +86,4 @@ public class TestsFragment extends Fragment {
         super.onAttach(context);
         this.context = context;
     }
-
 }

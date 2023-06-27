@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class Course1Activity extends AppCompatActivity {
 
-    ArrayList<Video> videos = new ArrayList<Video>();
+    ArrayList<Video> videos = new ArrayList<>();
     ListView videosList;
     String videosID[] = new String[] {
             "BAahBqreWZw","ysz_Dxcrfsg", "EMdmZ42heRE", "xC0MwjgLGA4", "Gn4gfQmxlK0",
@@ -49,19 +49,18 @@ public class Course1Activity extends AppCompatActivity {
         // получаем элемент ListView
         videosList = findViewById(R.id.videosList);
         // создаем адаптер
-        VideoAdapter stateAdapter = new VideoAdapter(this, R.layout.list_video_item, videos);
+        VideoAdapter videoAdapter = new VideoAdapter(this, R.layout.list_video_item, videos);
         // устанавливаем адаптер
-        videosList.setAdapter(stateAdapter);
+        videosList.setAdapter(videoAdapter);
         // слушатель выбора в списке
         AdapterView.OnItemClickListener itemListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
                 // получаем выбранный пункт
                 Video selectedVideo = (Video)parent.getItemAtPosition(position);
                 Intent intent = new Intent(Course1Activity.this, VideoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra("id", selectedVideo.getThumbnailResource());
+                intent.putExtra("id", selectedVideo.getId());
                 startActivity(intent);
             }
         };

@@ -30,15 +30,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnWo
     ArrayList<Word> words;
 
     @Override
-    public void onWordsChanged(ArrayList<Word> words) {
+    public void   onWordsChanged(ArrayList<Word> words) {
         Log.d("onWordsChanged", "SUCCESS");
         this.words = words;
     }
-
-    public void onWordsStatChanged(ArrayList<Word> words){
-        this.words = words;
-    }
-
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -55,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnWo
         db_adapter.open();
         words = db_adapter.getWords();
         db_adapter.close();
-
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
@@ -81,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnWo
                     replaceFragment(new ProfileFragment());
                     break;
             }
-
             return true;
         });
     }
@@ -116,5 +109,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnWo
         super.onActivityResult(requestCode, resultCode, data);
         if (data == null) {return;}
         words = data.getParcelableArrayListExtra("words");
+        Fragment testFragment = new TestsFragment();
+        Bundle bundleTest = new Bundle();
+        bundleTest.putParcelableArrayList("words", words);
+        testFragment.setArguments(bundleTest);
+        replaceFragment(testFragment);
     }
 }

@@ -32,7 +32,7 @@ public class VideoAdapter extends ArrayAdapter<Video> {
 
         Video video = videos.get(position);
 
-        String url = "https://i.ytimg.com/vi/" + video.getThumbnailResource() + "/maxresdefault.jpg";
+        String url = "https://i.ytimg.com/vi/" + video.getId() + "/maxresdefault.jpg";
         Picasso.get().load(url).fit().placeholder(R.drawable.ic_baseline_cached_24).into(thumbnailView);
         titleView.setText(video.getTitle());
 
