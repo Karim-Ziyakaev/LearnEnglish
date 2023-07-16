@@ -11,12 +11,14 @@
         android:id="@+id/word_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:singleLine="true"
         android:hint="@string/enter_word" />
 
     <EditText
         android:id="@+id/translation_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:singleLine="true"
         android:hint="@string/enter_translation" />
     <TextView
         android:id="@+id/success_text"

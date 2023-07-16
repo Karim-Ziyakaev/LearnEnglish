@@ -68,7 +68,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         void onSelectionChanged(Set<Integer> selectedPositions);
         void onFavoriteChanged(int position);
         void onWordChangedPosition(int newPos);
-        void onWordDeleted();
+        void onWordDeleted(Word word);
     }
 
     public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
@@ -474,20 +474,21 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
     public void removeByIdx(int position)
     {
-        // Get the current word and translation
         Word word = wordList.get(position);
-
         DatabaseAdapter db_adapter = new DatabaseAdapter(context);
         db_adapter.open();
         //надо именно гетИд потому что айди в бд другое чем в листе
         db_adapter.delete(word.getId());
         db_adapter.close();
         wordList.remove(position);
+        wSelectedPositions.clear();
+        if(word.getIsFavorite() == 1)
+            wFavoritePositions.remove(position);
+        notifyItemRemoved(position);
         if (selectionChangedListener != null) {
-            selectionChangedListener.onWordDeleted();
+            selectionChangedListener.onWordDeleted(word);
         }
         // Notify the adapter that the data has changed
-        notifyItemRemoved(position);
 
     }
 
@@ -502,6 +503,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
             if (i < wordList.size()) {
                 Word word = wordList.get(i);
                 db_adapter.delete(word.getId());
+                if(word.getIsFavorite() == 1)
+                    wFavoritePositions.remove(i);
                 wordList.remove(i);
                 notifyItemRemoved(i);
             }

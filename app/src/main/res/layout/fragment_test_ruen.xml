@@ -30,7 +30,8 @@
                 android:id="@+id/word_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="Answer here"/>
+                android:hint="Answer here"
+                android:singleLine="true"/>
             <Button
                 android:id="@+id/check_button"
                 android:layout_width="wrap_content"

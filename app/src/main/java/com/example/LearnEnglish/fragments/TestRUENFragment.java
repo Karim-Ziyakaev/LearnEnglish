@@ -102,7 +102,7 @@ public class TestRUENFragment extends Fragment {
                 }
                 else {
                     if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getWord().toLowerCase())) {
-                        wordText.setText("Заебись");
+                        wordText.setText("Nice!");
                         wordText.setTextSize(50);
                         wordText.setTextColor(Color.GREEN);
                         mWord.setAttempts(mWord.getAttempts() + 1);
@@ -112,7 +112,7 @@ public class TestRUENFragment extends Fragment {
                     } else {
                         mWord.setAttempts(mWord.getAttempts() + 1);
                         mWord.setWrongAttempts(mWord.getWrongAttempts() + 1);
-                        wordText.setText("Долбаеб");
+                        wordText.setText("Incorrect");
                         cardView.setCardBackgroundColor(Color.RED);
                         wordEditText.setVisibility(View.INVISIBLE);
                     }

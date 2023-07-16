@@ -129,7 +129,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         final Button randomButton = dialogView.findViewById(R.id.random_button);
         final TextView successText = dialogView.findViewById(R.id.success_text);
         builder.setView(dialogView)
-sa                .setPositiveButton("Close", new DialogInterface.OnClickListener(){
+                .setPositiveButton("Close", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         DatabaseAdapter db_adapter = new DatabaseAdapter(context);
@@ -243,6 +243,7 @@ sa                .setPositiveButton("Close", new DialogInterface.OnClickListene
             case R.id.item_sort:
                 if(item.isChecked()) {
                     adapter.setList(list_words);
+                    adapter.setShowButtons(true);
                     sortAZ = false;
                     item.setChecked(false);
                 }
@@ -254,6 +255,7 @@ sa                .setPositiveButton("Close", new DialogInterface.OnClickListene
                             return w1.getWord().compareTo(w2.getWord());
                         }
                     });
+                    adapter.setShowButtons(false);
                     adapter.setList(sorted_list_words);
                     item.setChecked(true);
                     sortAZ = true;
@@ -274,14 +276,16 @@ sa                .setPositiveButton("Close", new DialogInterface.OnClickListene
                 item.setChecked(!item.isChecked());
                 return true;
             case R.id.item_delete:
-                adapter.removeSelected(selectedPositions);
                 List<Integer> selectedPositionsList = new ArrayList<>(selectedPositions);
                 Collections.sort(selectedPositionsList, Collections.reverseOrder());
                 for(int i: selectedPositionsList){
                     list_words.remove(i);
                 }
-                mListener.onWordsChanged((ArrayList<Word>) list_words);
+                adapter.removeSelected(selectedPositions);
                 adapter.clearSelections();
+                refreshList();
+//                adapter.setList(list_words);
+                mListener.onWordsChanged((ArrayList<Word>) list_words);
                 requireActivity().invalidateOptionsMenu();
                 return true;
             case R.id.item_cancel:
@@ -370,8 +374,12 @@ sa                .setPositiveButton("Close", new DialogInterface.OnClickListene
     }
 
     @Override
-    public void onWordDeleted() {
+    public void onWordDeleted(Word word) {
         mListener.onWordsChanged((ArrayList<Word>) list_words);
+        if (list_words.contains(word)){
+            list_words.remove(word);
+        }
+        requireActivity().invalidateOptionsMenu();
     }
 
     @Override
