@@ -1,5 +1,6 @@
 package com.example.LearnEnglish.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.LearnEnglish.models.Achievement;
 import com.example.LearnEnglish.models.Word;
 
 import java.util.ArrayList;
@@ -37,11 +39,12 @@ public class DatabaseAdapter {
         String[] columns = new String[] {
                 DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_WORD, DatabaseHelper.COLUMN_TRANSLATE,
                 DatabaseHelper.COLUMN_IS_FAVORITE, DatabaseHelper.COLUMN_CORRECT_ANSWERS, DatabaseHelper.COLUMN_WRONG_ANSWERS,
-                DatabaseHelper.COLUMN_TOTAL_ATTEMPTS
+                DatabaseHelper.COLUMN_TOTAL_ATTEMPTS, DatabaseHelper.COLUMN_IS_LEARNED
         };
         return  database.query(DatabaseHelper.TABLE_WORDS, columns, null, null, null, null, null);
     }
 
+    @SuppressLint("Range")
     public ArrayList<Word> getWords(){
         ArrayList<Word> words = new ArrayList<>();
         ArrayList<Word> favWords = new ArrayList<>();
@@ -54,12 +57,13 @@ public class DatabaseAdapter {
             int correctAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_CORRECT_ANSWERS));
             int wrongAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WRONG_ANSWERS));
             int totalAttemps = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS));
+            int isLearned = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_LEARNED));
 
             if(isFavorite == 1) {
-                favWords.add(new Word(id, word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps));
+                favWords.add(new Word(id, word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps, isLearned));
             }
             else
-                words.add(new Word(id, word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps));
+                words.add(new Word(id, word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps, isLearned));
         }
         words.addAll(0, favWords);
         cursor.close();
@@ -70,6 +74,7 @@ public class DatabaseAdapter {
         return DatabaseUtils.queryNumEntries(database, DatabaseHelper.TABLE_WORDS);
     }
 
+    @SuppressLint("Range")
     public Word getWord(long id){
         Word word = null;
         String query = String.format("SELECT * FROM %s WHERE %s=?",DatabaseHelper.TABLE_WORDS, DatabaseHelper.COLUMN_ID);
@@ -82,8 +87,9 @@ public class DatabaseAdapter {
             int correctAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_CORRECT_ANSWERS));
             int wrongAnswers = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_WRONG_ANSWERS));
             int totalAttemps = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS));
+            int isLearned = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_IS_LEARNED));
 
-            word = new Word(id, s_word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps);
+            word = new Word(id, s_word, translate, isFavorite, correctAnswers, wrongAnswers, totalAttemps, isLearned);
         }
         cursor.close();
         return  word;
@@ -129,12 +135,14 @@ public class DatabaseAdapter {
         cv.put(DatabaseHelper.COLUMN_CORRECT_ANSWERS, word.getCorrectAttempts());
         cv.put(DatabaseHelper.COLUMN_WRONG_ANSWERS, word.getWrongAttempts());
         cv.put(DatabaseHelper.COLUMN_TOTAL_ATTEMPTS, word.getAttempts());
+        cv.put(DatabaseHelper.COLUMN_IS_LEARNED, word.getIsLearned());
 
         long edtCount = database.update(DatabaseHelper.TABLE_WORDS, cv, whereClause, null);
         Log.d("mLog", "changed rows count = " + edtCount);
         return edtCount;
     }
 
+    @SuppressLint("Range")
     public Word getRandomWord(){
         Word word = null;
 
@@ -165,6 +173,7 @@ public class DatabaseAdapter {
         database.update(DatabaseHelper.TABLE_WORDS, cv, whereClause, null);
     }
 
+    @SuppressLint("Range")
     public Set<Integer> getFavorite(){
         Set<Integer> favoritePositions = new HashSet<>();
         /*
@@ -185,5 +194,66 @@ public class DatabaseAdapter {
         return favoritePositions;
     }
 
+    @SuppressLint("Range")
+    public List<Achievement> getAllAchievements() {
+        List<Achievement> achievements = new ArrayList<>();
+        String[] columns = new String[] {
+                DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_TITLE, DatabaseHelper.COLUMN_DESCRIPTION,
+                DatabaseHelper.COLUMN_PROGRESS, DatabaseHelper.COLUMN_TOTAL_PROGRESS
+        };
+        Cursor cursor = database.query(DatabaseHelper.TABLE_ACHIEVEMENTS, columns, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
+                String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TITLE));
+                String description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DESCRIPTION));
+                int progress = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PROGRESS));
+                int totalProgress = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_TOTAL_PROGRESS));
 
+                Achievement achievement = new Achievement(id, title, description, progress, totalProgress);
+                achievements.add(achievement);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return achievements;
+    }
+
+//    public void updateAchievement(Achievement achievement){
+//        String whereClause = DatabaseHelper.COLUMN_ID + "=" + achievement.getId();
+//        ContentValues cv = new ContentValues();
+//
+//        cv.put(DatabaseHelper.COLUMN_PROGRESS, achievement.getProgress());
+//
+//        database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
+//    }
+    public void updateAchievementWords(){
+        List<Achievement> achievements = getAllAchievements();
+        for(int i = 2; i<6; i++){
+            String whereClause = DatabaseHelper.COLUMN_ID + "=" + i;
+            ContentValues cv = new ContentValues();
+
+            //i-1 потому что с 0 список, а i тут как айди
+            int progress = achievements.get(i-1).getProgress();
+            if (progress != achievements.get(i-1).getTotalProgress())
+                progress++;
+            cv.put(DatabaseHelper.COLUMN_PROGRESS, progress);
+
+            database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
+        }
+    }
+
+    public void updateAchievementLearn(){
+        List<Achievement> achievements = getAllAchievements();
+        for(int i = 6; i<10; i++){
+            String whereClause = DatabaseHelper.COLUMN_ID + "=" + i;
+            ContentValues cv = new ContentValues();
+
+            int progress = achievements.get(i-1).getProgress();
+            if (progress != achievements.get(i-1).getTotalProgress())
+                progress++;
+            cv.put(DatabaseHelper.COLUMN_PROGRESS, progress);
+
+            database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
+        }
+    }
 }

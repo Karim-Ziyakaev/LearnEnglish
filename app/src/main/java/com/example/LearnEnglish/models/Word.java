@@ -12,6 +12,7 @@ public class Word implements Parcelable {
     private int attempts;
     private int wrongAttempts;
     private int correctAttempts;
+    private int isLearned;
 
     public Word(long id, String word, String translate, int isFavorite){
         this.id = id;
@@ -22,9 +23,10 @@ public class Word implements Parcelable {
         attempts = 0;
         wrongAttempts = 0;
         correctAttempts = 0;
+        isLearned = 0;
     }
 
-    public Word(long id, String word, String translate, int isFavorite, int correctAttempts, int wrongAttempts, int attempts){
+    public Word(long id, String word, String translate, int isFavorite, int correctAttempts, int wrongAttempts, int attempts, int isLearned){
         this.id = id;
         this.word = word;
         this.translate = translate;
@@ -33,6 +35,7 @@ public class Word implements Parcelable {
         this.correctAttempts = correctAttempts;
         this.wrongAttempts = wrongAttempts;
         this.attempts = attempts;
+        this.isLearned = isLearned;
     }
 
     protected Word(Parcel in) {
@@ -44,6 +47,7 @@ public class Word implements Parcelable {
         attempts = in.readInt();
         wrongAttempts = in.readInt();
         correctAttempts = in.readInt();
+        isLearned = in.readInt();
     }
 
     public static final Creator<Word> CREATOR = new Creator<Word>() {
@@ -114,6 +118,14 @@ public class Word implements Parcelable {
         return correctAttempts;
     }
 
+    public void setIsLearned(int isLearned){
+        this.isLearned = isLearned;
+    }
+
+    public int getIsLearned(){
+        return isLearned;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -129,5 +141,6 @@ public class Word implements Parcelable {
         parcel.writeInt(attempts);
         parcel.writeInt(wrongAttempts);
         parcel.writeInt(correctAttempts);
+        parcel.writeInt(isLearned);
     }
 }

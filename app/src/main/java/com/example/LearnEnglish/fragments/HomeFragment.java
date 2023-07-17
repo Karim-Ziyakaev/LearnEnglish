@@ -162,6 +162,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
                 list_words.add(new Word(-1, s_word, s_translate, 0));
                 db_adapter.open();
                 db_adapter.insert(list_words.get(list_words.size()-1));
+                db_adapter.updateAchievementWords();
                 db_adapter.close();
                 adapter.setList(list_words);
                 wordEditText.setText("");

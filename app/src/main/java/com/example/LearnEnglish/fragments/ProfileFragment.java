@@ -36,14 +36,12 @@ public class ProfileFragment extends Fragment {
         requireActivity().setTitle("Profile");
         recyclerView = rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        achievements = loadAchievements(); // Загрузите достижения из вашего источника данных
+        DatabaseAdapter db_adapter = new DatabaseAdapter(requireContext());
+        db_adapter.open();
+        achievements = db_adapter.getAllAchievements();
+        db_adapter.close();
         adapter = new AchievementsAdapter(achievements);
         recyclerView.setAdapter(adapter);
         return rootView;
-    }
-
-    private List<Achievement> loadAchievements() {
-
-        return null;
     }
 }

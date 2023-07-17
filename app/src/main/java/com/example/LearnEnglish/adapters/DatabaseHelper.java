@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int SCHEMA = 1; // версия базы данных
     static final String TABLE_WORDS = "words"; // название таблицы в бд
     static final String TABLE_RANDOM = "randomwords"; // название таблицы в бд
+    static final String TABLE_ACHIEVEMENTS = "achievements";
 
     // названия столбцов
     static final String COLUMN_ID = "_id";
@@ -28,9 +29,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     static final String COLUMN_CORRECT_ANSWERS = "correct_answers";
     static final String COLUMN_WRONG_ANSWERS = "wrong_answers";
     static final String COLUMN_TOTAL_ATTEMPTS = "total_attempts";
+    static final String COLUMN_IS_LEARNED = "is_learned";
 
     static final String COLUMN_RANDOM_WORD = "random_word";
     static final String COLUMN_RANDOM_TRANSLATE = "random_translate";
+
+    static final String COLUMN_TITLE = "title";
+    static final String COLUMN_DESCRIPTION = "description";
+    static final String COLUMN_PROGRESS = "progress";
+    static final String COLUMN_TOTAL_PROGRESS = "total_progress";
 
 
     private Context myContext;

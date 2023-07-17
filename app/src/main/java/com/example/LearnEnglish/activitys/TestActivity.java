@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.LearnEnglish.R;
+import com.example.LearnEnglish.adapters.DatabaseAdapter;
 import com.example.LearnEnglish.adapters.TestPagerAdapter;
 import com.example.LearnEnglish.fragments.ResultsFragment;
 import com.example.LearnEnglish.fragments.TestChoiceFragment;
@@ -84,7 +85,11 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         ArrayList<Fragment> fragments = new ArrayList<>();
         Random random = new Random();
         HashSet<Integer> selectedIndexes = new HashSet<>();
-        int size = words.size();
+        int size = 0;
+        for (Word i : words){
+            if (i.getIsLearned() != 1)
+                size++;
+        }
         int fragmentsCount = Math.min(size, 12);
         int[] fragmentTypes = new int[] {0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3};
 
@@ -93,7 +98,7 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
             int randomIndex;
             do {
                 randomIndex = random.nextInt(size);
-            } while (selectedIndexes.contains(randomIndex));
+            } while (selectedIndexes.contains(randomIndex) || words.get(randomIndex).getIsLearned() == 1);
             selectedIndexes.add(randomIndex);
             indexes.add(randomIndex);
             Word word = words.get(randomIndex);
@@ -133,14 +138,18 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         ArrayList<Fragment> fragments = new ArrayList<>();
         Random random = new Random();
         HashSet<Integer> selectedIndexes = new HashSet<>();
-        int size = words.size();
+        int size = 0;
+        for (Word i : words){
+            if (i.getIsLearned() != 1)
+                size++;
+        }
         int fragmentsCount = Math.min(size, 10);
 
         for (int i = 0; i < fragmentsCount; i++) {
             int randomIndex;
             do {
                 randomIndex = random.nextInt(size);
-            } while (selectedIndexes.contains(randomIndex));
+            } while (selectedIndexes.contains(randomIndex) || words.get(randomIndex).getIsLearned() == 1);
             selectedIndexes.add(randomIndex);
             indexes.add(randomIndex);
             Word word = words.get(randomIndex);
@@ -160,14 +169,18 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         ArrayList<Fragment> fragments = new ArrayList<>();
         Random random = new Random();
         HashSet<Integer> selectedIndexes = new HashSet<>();
-        int size = words.size();
+        int size = 0;
+        for (Word i : words){
+            if (i.getIsLearned() != 1)
+                size++;
+        }
         int fragmentsCount = Math.min(size, 10); // вычисляем количество фрагментов, которое нужно создать
 
         for (int i = 0; i < fragmentsCount; i++) {
             int randomIndex;
             do {
                 randomIndex = random.nextInt(size); // генерируем новый случайный индекс
-            } while (selectedIndexes.contains(randomIndex)); // проверяем, был ли уже выбран этот индекс
+            } while (selectedIndexes.contains(randomIndex) || words.get(randomIndex).getIsLearned() == 1); // проверяем, был ли уже выбран этот индекс
             selectedIndexes.add(randomIndex); // добавляем индекс в HashSet
             indexes.add(randomIndex);
             Word word = words.get(randomIndex);
@@ -187,14 +200,18 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         ArrayList<Fragment> fragments = new ArrayList<>();
         Random random = new Random();
         HashSet<Integer> selectedIndexes = new HashSet<>();
-        int size = words.size();
+        int size = 0;
+        for (Word i : words){
+            if (i.getIsLearned() != 1)
+                size++;
+        }
         int fragmentsCount = Math.min(size, 10);
 
         for (int i = 0; i < fragmentsCount; i++) {
             int randomIndex;
             do {
                 randomIndex = random.nextInt(size);
-            } while (selectedIndexes.contains(randomIndex));
+            } while (selectedIndexes.contains(randomIndex) || words.get(randomIndex).getIsLearned() == 1);
             selectedIndexes.add(randomIndex);
             indexes.add(randomIndex);
             Word word = words.get(randomIndex);
@@ -214,14 +231,18 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         ArrayList<Fragment> fragments = new ArrayList<>();
         Random random = new Random();
         HashSet<Integer> selectedIndexes = new HashSet<>();
-        int size = words.size();
+        int size = 0;
+        for (Word i : words){
+            if (i.getIsLearned() != 1)
+                size++;
+        }
         int fragmentsCount = Math.min(size, 10);
 
         for (int i = 0; i < fragmentsCount; i++) {
             int randomIndex;
             do {
                 randomIndex = random.nextInt(size);
-            } while (selectedIndexes.contains(randomIndex));
+            } while (selectedIndexes.contains(randomIndex) || words.get(randomIndex).getIsLearned() == 1);
             selectedIndexes.add(randomIndex);
             indexes.add(randomIndex);
             Word word = words.get(randomIndex);
@@ -264,6 +285,18 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         pagerResults.setVisibility(View.VISIBLE);
         okButton.setVisibility(View.VISIBLE);
         okButton.setOnClickListener(view -> {
+            DatabaseAdapter db_adapter = new DatabaseAdapter(this);
+            db_adapter.open();
+            for (Word word: words){
+                int wrong = word.getWrongAttempts()==0?1:word.getWrongAttempts();
+                float progress = ((float) (word.getCorrectAttempts()/wrong)/10)*100;
+                if (progress == 100){
+                    db_adapter.updateAchievementLearn();
+                    word.setIsLearned(1);
+                    db_adapter.update(word);
+                }
+            }
+            db_adapter.close();
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra("words", words);
             setResult(RESULT_OK, intent);

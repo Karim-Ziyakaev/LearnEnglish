@@ -310,7 +310,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                         wordList.get(newPosForMove).getIsFavorite(),
                         wordList.get(newPosForMove).getCorrectAttempts(),
                         wordList.get(newPosForMove).getWrongAttempts(),
-                        wordList.get(newPosForMove).getAttempts());
+                        wordList.get(newPosForMove).getAttempts(),
+                        wordList.get(newPosForMove).getIsLearned());
 
                 wordList.get(newPosForMove).setWord(wordList.get(oldPosForMove).getWord());
                 wordList.get(newPosForMove).setTranslate(wordList.get(oldPosForMove).getTranslate());
@@ -318,6 +319,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 wordList.get(newPosForMove).setCorrectAttempts(wordList.get(oldPosForMove).getCorrectAttempts());
                 wordList.get(newPosForMove).setWrongAttempts(wordList.get(oldPosForMove).getWrongAttempts());
                 wordList.get(newPosForMove).setAttempts(wordList.get(oldPosForMove).getAttempts());
+                wordList.get(newPosForMove).setIsLearned(wordList.get(oldPosForMove).getIsLearned());
 
                 db_adapter.update(wordList.get(newPosForMove));
 
@@ -329,7 +331,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                             wordList.get(i).getIsFavorite(),
                             wordList.get(i).getCorrectAttempts(),
                             wordList.get(i).getWrongAttempts(),
-                            wordList.get(i).getAttempts());
+                            wordList.get(i).getAttempts(),
+                            wordList.get(i).getIsLearned());
 
                     wordList.get(i).setWord(temp.getWord());
                     wordList.get(i).setTranslate(temp.getTranslate());
@@ -337,6 +340,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                     wordList.get(i).setCorrectAttempts(temp.getCorrectAttempts());
                     wordList.get(i).setWrongAttempts(temp.getWrongAttempts());
                     wordList.get(i).setAttempts(temp.getAttempts());
+                    wordList.get(i).setIsLearned(temp.getIsLearned());
 
                     db_adapter.update(wordList.get(i));
 
@@ -350,7 +354,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                         wordList.get(newPosForMove).getIsFavorite(),
                         wordList.get(newPosForMove).getCorrectAttempts(),
                         wordList.get(newPosForMove).getWrongAttempts(),
-                        wordList.get(newPosForMove).getAttempts());
+                        wordList.get(newPosForMove).getAttempts(),
+                        wordList.get(newPosForMove).getIsLearned());
 
                 wordList.get(newPosForMove).setWord(wordList.get(oldPosForMove).getWord());
                 wordList.get(newPosForMove).setTranslate(wordList.get(oldPosForMove).getTranslate());
@@ -358,6 +363,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                 wordList.get(newPosForMove).setCorrectAttempts(wordList.get(oldPosForMove).getCorrectAttempts());
                 wordList.get(newPosForMove).setWrongAttempts(wordList.get(oldPosForMove).getWrongAttempts());
                 wordList.get(newPosForMove).setAttempts(wordList.get(oldPosForMove).getAttempts());
+                wordList.get(newPosForMove).setIsLearned(wordList.get(oldPosForMove).getIsLearned());
 
                 db_adapter.update(wordList.get(newPosForMove));
 
@@ -369,7 +375,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                             wordList.get(i).getIsFavorite(),
                             wordList.get(i).getCorrectAttempts(),
                             wordList.get(i).getWrongAttempts(),
-                            wordList.get(i).getAttempts());
+                            wordList.get(i).getAttempts(),
+                            wordList.get(i).getIsLearned());
 
                     wordList.get(i).setWord(temp.getWord());
                     wordList.get(i).setTranslate(temp.getTranslate());
@@ -377,6 +384,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                     wordList.get(i).setCorrectAttempts(temp.getCorrectAttempts());
                     wordList.get(i).setWrongAttempts(temp.getWrongAttempts());
                     wordList.get(i).setAttempts(temp.getAttempts());
+                    wordList.get(i).setIsLearned(temp.getIsLearned());
 
                     db_adapter.update(wordList.get(i));
 

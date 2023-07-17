@@ -1,5 +1,6 @@
 package com.example.LearnEnglish.adapters;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapte
         holder.titleTextView.setText(achievement.getTitle());
         holder.descriptionTextView.setText(achievement.getDescription());
         holder.progressTextView.setText(achievement.getProgress() + "/" + achievement.getTotalProgress());
+        if (achievement.getProgress() == achievement.getTotalProgress())
+            holder.itemView.setBackgroundColor(Color.GREEN);
     }
 
     @Override
