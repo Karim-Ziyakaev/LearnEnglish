@@ -1,9 +1,9 @@
 package com.example.LearnEnglish.adapters;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,8 +32,9 @@ public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapte
         holder.titleTextView.setText(achievement.getTitle());
         holder.descriptionTextView.setText(achievement.getDescription());
         holder.progressTextView.setText(achievement.getProgress() + "/" + achievement.getTotalProgress());
-        if (achievement.getProgress() == achievement.getTotalProgress())
-            holder.itemView.setBackgroundColor(Color.GREEN);
+        if (achievement.getProgress() == achievement.getTotalProgress()) {
+            holder.completedImageView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -45,12 +46,19 @@ public class AchievementsAdapter extends RecyclerView.Adapter<AchievementsAdapte
         TextView titleTextView;
         TextView descriptionTextView;
         TextView progressTextView;
+        ImageView completedImageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
             progressTextView = itemView.findViewById(R.id.progressTextView);
+            completedImageView = itemView.findViewById(R.id.completedImageView);
         }
+    }
+
+    public void setAchievements(List<Achievement> achievements){
+        this.achievements = achievements;
+        notifyDataSetChanged();
     }
 }

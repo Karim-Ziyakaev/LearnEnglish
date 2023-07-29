@@ -29,4 +29,11 @@
     <string name="answer">Answer</string>
     <string name="correct_incorrect">Correct/Incorrect</string>
     <string name="learn_progress">Learn progress</string>
+    <string name="Achievements">Достижения</string>
+    <string name="Statistics">Статистика</string>
+    <string name="added_words">Добавлено слов</string>
+    <string name="learned_words">Изучено слов</string>
+    <string name="delete_all_words">Удалить все слова</string>
+    <string name="settings">Настройки</string>
+    <string name="reset_all">Сбросить всё</string>
 </resources>

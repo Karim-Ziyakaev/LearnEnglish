@@ -196,7 +196,7 @@ public class DatabaseAdapter {
 
     @SuppressLint("Range")
     public List<Achievement> getAllAchievements() {
-        List<Achievement> achievements = new ArrayList<>();
+        ArrayList<Achievement> achievements = new ArrayList<>();
         String[] columns = new String[] {
                 DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_TITLE, DatabaseHelper.COLUMN_DESCRIPTION,
                 DatabaseHelper.COLUMN_PROGRESS, DatabaseHelper.COLUMN_TOTAL_PROGRESS
@@ -215,6 +215,34 @@ public class DatabaseAdapter {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        return achievements;
+    }
+
+    public List<Achievement> getAllAchievementsProfile(){
+        ArrayList<Achievement> achievements = new ArrayList<>();
+        ArrayList<Achievement> completedAchievements = new ArrayList<>();
+        String[] columns = new String[] {
+                DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_TITLE, DatabaseHelper.COLUMN_DESCRIPTION,
+                DatabaseHelper.COLUMN_PROGRESS, DatabaseHelper.COLUMN_TOTAL_PROGRESS
+        };
+        Cursor cursor = database.query(DatabaseHelper.TABLE_ACHIEVEMENTS, columns, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
+                String title = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_TITLE));
+                String description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DESCRIPTION));
+                int progress = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_PROGRESS));
+                int totalProgress = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_TOTAL_PROGRESS));
+
+                Achievement achievement = new Achievement(id, title, description, progress, totalProgress);
+                if (progress == totalProgress)
+                    completedAchievements.add(achievement);
+                else
+                    achievements.add(achievement);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        achievements.addAll(0, completedAchievements);
         return achievements;
     }
 
@@ -255,5 +283,17 @@ public class DatabaseAdapter {
 
             database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
         }
+    }
+
+    public void resetAll(){
+        database.delete(DatabaseHelper.TABLE_WORDS, null, null);
+
+        String whereClause = DatabaseHelper.COLUMN_ID + "=1";
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseHelper.COLUMN_PROGRESS, 0);
+        database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, null, null);
+        cv.clear();
+        cv.put(DatabaseHelper.COLUMN_PROGRESS, 1);
+        database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
     }
 }

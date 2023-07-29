@@ -25,12 +25,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnWordsChangeListener{
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnWordsChangeListener, ProfileFragment.OnWordsChangeListener{
     boolean firstOpen = true;
     ArrayList<Word> words;
 
     @Override
-    public void   onWordsChanged(ArrayList<Word> words) {
+    public void onWordsChanged(ArrayList<Word> words) {
         Log.d("onWordsChanged", "SUCCESS");
         this.words = words;
     }
@@ -72,7 +72,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnWo
                     replaceFragment(new CoursesFragment());
                     break;
                 case R.id.profile:
-                    replaceFragment(new ProfileFragment());
+                    Bundle bundleProfile = new Bundle();
+                    bundleProfile.putParcelableArrayList("words", words);
+                    Fragment profileFragment = new ProfileFragment();
+                    profileFragment.setArguments(bundleProfile);
+                    replaceFragment(profileFragment);
                     break;
             }
             return true;
