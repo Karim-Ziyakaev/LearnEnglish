@@ -36,7 +36,7 @@ public class CoursesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceVideo) {
         View rootView = inflater.inflate(R.layout.fragment_courses, container, false);
-        requireActivity().setTitle("Courses");
+        requireActivity().setTitle(getString(R.string.courses));
 
         settings = requireContext().getSharedPreferences("LastVideo", 0);
         String video_id = settings.getString("video_id","не определено");

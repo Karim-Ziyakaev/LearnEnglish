@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        requireActivity().setTitle("Profile");
+        requireActivity().setTitle(getString(R.string.profile));
         Button deleteWords = rootView.findViewById(R.id.delete_words_button);
         Button resetAll = rootView.findViewById(R.id.reset_all_button);
         Button language = rootView.findViewById(R.id.language_button);

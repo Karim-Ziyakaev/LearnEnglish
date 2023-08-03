@@ -62,4 +62,6 @@
     <string name="type_answer">Введите ответ!</string>
     <string name="edit">Изменить</string>
     <string name="language">Язык</string>
+    <string name="results">Результаты</string>
+    <string name="choice_test">Тест с выбором</string>
 </resources>

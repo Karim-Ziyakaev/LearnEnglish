@@ -440,7 +440,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             itemWords.setVisible(true);
             itemTranslates.setVisible(true);
 
-            requireActivity().setTitle("Home");
+            requireActivity().setTitle(getString(R.string.home));
             requireActivity().invalidateOptionsMenu();
         }
     }

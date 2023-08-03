@@ -42,7 +42,7 @@ public class TestsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tests, container, false);
-        requireActivity().setTitle("Tests");
+        requireActivity().setTitle(getString(R.string.tests));
 
         Intent intent = new Intent(requireContext(), TestActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

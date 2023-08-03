@@ -72,11 +72,11 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
                 break;
             case "Choice":
                 initChoice();
-                setTitle(getString(R.string.choice));
+                setTitle(getString(R.string.choice_test));
                 break;
             case "ChoiceRu":
                 initChoiceRu();
-                setTitle(getString(R.string.choice_ru));
+                setTitle(getString(R.string.choice_test));
                 break;
             case "Combo":
                 initCombo();
@@ -277,7 +277,7 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
     private void testEnded(){
         isEnded = true;
         pager.setVisibility(View.GONE);
-        setTitle("Results");
+        setTitle(getString(R.string.results));
         ArrayList<Fragment> fragments = new ArrayList<>();
         int i = 0;
         for(int j : indexes) {

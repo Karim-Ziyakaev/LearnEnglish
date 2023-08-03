@@ -62,5 +62,7 @@
     <string name="type_answer">Please type a answer!</string>
     <string name="edit">Edit</string>
     <string name="language">Language</string>
+    <string name="results">Results</string>
+    <string name="choice_test">Test choice</string>
 
 </resources>
