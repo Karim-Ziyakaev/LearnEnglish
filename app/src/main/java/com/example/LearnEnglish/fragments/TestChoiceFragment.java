@@ -177,11 +177,11 @@ public class TestChoiceFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(selectedPos[0]==-1){
-                    Toast.makeText(requireContext(), "Choose answer", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.choose_answer), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     if (correctIndex == selectedPos[0]) {
-                        wordText.setText("Заебись");
+                        wordText.setText("");
                         wordText.setTextSize(50);
                         wordText.setTextColor(Color.GREEN);
                         mWord.setAttempts(mWord.getAttempts() + 1);
@@ -190,7 +190,7 @@ public class TestChoiceFragment extends Fragment {
                     } else {
                         mWord.setAttempts(mWord.getAttempts() + 1);
                         mWord.setWrongAttempts(mWord.getWrongAttempts() + 1);
-                        wordText.setText("Долбаеб");
+                        wordText.setText("");
                         cardView.setCardBackgroundColor(Color.RED);
                     }
                     checkButton.setVisibility(View.GONE);

@@ -1,10 +1,16 @@
 package com.example.LearnEnglish.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.LearnEnglish.R;
@@ -25,11 +30,13 @@ import com.example.LearnEnglish.models.Word;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
 
     private ProfileFragment.OnWordsChangeListener mListener;
     private ArrayList<Word> words;
+    SharedPreferences settings;
 
     public interface OnWordsChangeListener {
         void onWordsChanged(ArrayList<Word> words);
@@ -64,6 +71,7 @@ public class ProfileFragment extends Fragment {
         requireActivity().setTitle("Profile");
         Button deleteWords = rootView.findViewById(R.id.delete_words_button);
         Button resetAll = rootView.findViewById(R.id.reset_all_button);
+        Button language = rootView.findViewById(R.id.language_button);
         TextView countAddedWords = rootView.findViewById(R.id.count_added_text);
         TextView countLearnedWords = rootView.findViewById(R.id.count_learned_text);
         RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
@@ -117,7 +125,45 @@ public class ProfileFragment extends Fragment {
             adapter.setAchievements(achievements);
             countAddedWords.setText("0");
             countLearnedWords.setText("0");
+
+            settings = requireContext().getSharedPreferences("LastVideo", 0);
+            SharedPreferences.Editor prefEditor = settings.edit();
+            prefEditor.putString("course", "не определено");
+            prefEditor.putString("video_id", "не определено");
+            prefEditor.putString("title", "не определено");
+            prefEditor.apply();
         });
+
+        language.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.select_language_dialog, null);
+            final Button english_button = dialogView.findViewById(R.id.english_button);
+            final Button russian_button = dialogView.findViewById(R.id.russian_button);
+            builder.setView(dialogView)
+                    .setNeutralButton(getString(R.string.close), null)
+                    .create()
+                    .show();
+            english_button.setOnClickListener(view1 -> {
+                setLanguage(requireActivity(), "en");
+                requireActivity().finish();
+                startActivity(((Activity) requireContext()).getIntent());
+            });
+            russian_button.setOnClickListener(view1 -> {
+                setLanguage(requireActivity(), "ru");
+                requireActivity().finish();
+                startActivity(((Activity) requireContext()).getIntent());
+            });
+        });
+
         return rootView;
+    }
+
+    public void setLanguage(Activity activity, String language){
+        Locale locale = new Locale(language);
+        locale.setDefault(locale);
+        Resources resources = activity.getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
 }

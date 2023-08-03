@@ -285,6 +285,24 @@ public class DatabaseAdapter {
         }
     }
 
+    public void updateAchievementCourse(){
+        String whereClause = DatabaseHelper.COLUMN_ID + "=" + 11;
+        ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.COLUMN_PROGRESS, 1);
+
+        database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
+    }
+
+    public void updateAchievementTest(){
+        String whereClause = DatabaseHelper.COLUMN_ID + "=" + 10;
+        ContentValues cv = new ContentValues();
+
+        cv.put(DatabaseHelper.COLUMN_PROGRESS, 1);
+
+        database.update(DatabaseHelper.TABLE_ACHIEVEMENTS, cv, whereClause, null);
+    }
+
     public void resetAll(){
         database.delete(DatabaseHelper.TABLE_WORDS, null, null);
 

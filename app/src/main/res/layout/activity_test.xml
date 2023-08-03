@@ -5,13 +5,12 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activitys.TestActivity"
-    android:padding="20dp"
     android:orientation="vertical"
     android:weightSum="100">
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/test_pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="60"
         android:layout_gravity="center"/>
 
@@ -35,7 +34,7 @@
         android:id="@+id/ok_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OK"
+        android:text="@string/save"
         android:layout_gravity="center"
         android:visibility="gone"/>
 

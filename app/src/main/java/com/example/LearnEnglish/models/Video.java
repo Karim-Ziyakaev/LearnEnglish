@@ -9,6 +9,10 @@ public class Video {
         this.id = id;
     }
 
+    public Video() {
+
+    }
+
     public String getTitle(){
         return this.title;
     }

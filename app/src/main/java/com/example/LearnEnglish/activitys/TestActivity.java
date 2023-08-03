@@ -56,25 +56,31 @@ public class TestActivity extends AppCompatActivity implements TestRUENFragment.
         words = arguments.getParcelableArrayList("words");
         indexes = new ArrayList<>();
 
+        DatabaseAdapter db_adapter = new DatabaseAdapter(this);
+        db_adapter.open();
+        db_adapter.updateAchievementTest();
+        db_adapter.close();
+
         switch (selectedTest){
             case "RUEN":
                 initRUEN();
-                setTitle("Test RU/EN");
+                setTitle(getString(R.string.ru_en));
                 break;
             case "ENRU":
                 initENRU();
-                setTitle("Test EN/RU");
+                setTitle(getString(R.string.en_ru));
                 break;
             case "Choice":
                 initChoice();
-                setTitle("Test choice");
+                setTitle(getString(R.string.choice));
                 break;
             case "ChoiceRu":
                 initChoiceRu();
-                setTitle("Test choice");
+                setTitle(getString(R.string.choice_ru));
+                break;
             case "Combo":
                 initCombo();
-                setTitle("Test combo");
+                setTitle(getString(R.string.combo));
                 break;
             default:
                 break;

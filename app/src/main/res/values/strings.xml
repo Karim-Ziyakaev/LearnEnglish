@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name" translatable="false">Learn English</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="adding_new_word">adding new word</string>
-    <string name="search">search</string>
-    <string name="buttons_on_elements">Buttons on elements</string>
+    <string name="adding_new_word">Add new word</string>
+    <string name="search">Search</string>
+    <string name="buttons_on_elements">Buttons on words</string>
     <string name="sort_a_z">Sort A-Z</string>
-    <string name="hide_translation">Hide translation</string>
-    <string name="hide_word">Hide word</string>
-    <string name="delete">delete</string>
-    <string name="cancel">cancel</string>
+    <string name="hide_translation">Translates</string>
+    <string name="hide_word">Words</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
     <string name="home">Home</string>
     <string name="tests">Tests</string>
     <string name="courses">Courses</string>
@@ -19,7 +19,6 @@
     <string name="enter_word">Enter word</string>
     <string name="enter_translation">Enter translation</string>
     <string name="hello_blank_fragment">hello blank fragment</string>
-    <string name="english_zero">Английский с нуля</string>
     <string name="more_image_button">Image button for show popup menu</string>
     <string name="image_button_favorite">Image button for set favorite</string>
     <string name="favorite">favorite</string>
@@ -29,11 +28,39 @@
     <string name="answer">Answer</string>
     <string name="correct_incorrect">Correct/Incorrect</string>
     <string name="learn_progress">Learn progress</string>
-    <string name="Achievements">Достижения</string>
-    <string name="Statistics">Статистика</string>
-    <string name="added_words">Добавлено слов</string>
-    <string name="learned_words">Изучено слов</string>
-    <string name="delete_all_words">Удалить все слова</string>
-    <string name="settings">Настройки</string>
-    <string name="reset_all">Сбросить всё</string>
+    <string name="Statistics">Statistics</string>
+    <string name="learned_words">Learned words</string>
+    <string name="delete_all_words">Delete all words</string>
+    <string name="settings">Settings</string>
+    <string name="last_video">Last seen</string>
+    <string name="lifehacks">Lifehacks</string>
+    <string name="games_english">English in games</string>
+    <string name="en_ru">Test EN/RU</string>
+    <string name="choice">Test choice from russian</string>
+    <string name="combo">Test combo</string>
+    <string name="title">Title</string>
+    <string name="correct_attempts">Correct attempts</string>
+    <string name="wrong_attempts">Wrong attempts</string>
+    <string name="total_attempts">Total attempts</string>
+    <string name="english_zero">English from zero</string>
+    <string name="Achievements">Achievements</string>
+    <string name="added_words">Added words</string>
+    <string name="reset_all">Reset all</string>
+    <string name="times_in_english">Tenses in english</string>
+    <string name="ru_en">Test RU/EN</string>
+    <string name="choice_ru">Test choice from english</string>
+    <string name="error_empty_word">Error, empty word</string>
+    <string name="error_empty_translate">Error, empty translation</string>
+    <string name="close">Close</string>
+    <string name="selected_words">Selected: %1$d</string>
+    <string name="count">count</string>
+    <string name="save">Save</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="change">change</string>
+    <string name="choose_answer">Choose answer</string>
+    <string name="type_answer">Please type a answer!</string>
+    <string name="edit">Edit</string>
+    <string name="language">Language</string>
+
 </resources>

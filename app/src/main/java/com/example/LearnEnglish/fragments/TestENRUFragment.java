@@ -96,12 +96,11 @@ public class TestENRUFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getWord().toLowerCase())){
-                    Toast.makeText(requireContext(), "Please type a answer!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.type_answer), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     if (wordEditText.getText().toString().toLowerCase().trim().equals(mWord.getTranslate().toLowerCase())) {
-                        wordText.setText("Заебись");
-                        wordText.setTextSize(50);
+                        wordText.setText("");
                         wordText.setTextColor(Color.GREEN);
                         mWord.setAttempts(mWord.getAttempts() + 1);
                         mWord.setCorrectAttempts(mWord.getCorrectAttempts() + 1);
@@ -110,7 +109,7 @@ public class TestENRUFragment extends Fragment {
                     } else {
                         mWord.setAttempts(mWord.getAttempts() + 1);
                         mWord.setWrongAttempts(mWord.getWrongAttempts() + 1);
-                        wordText.setText("Долбаеб");
+                        wordText.setText("");
                         cardView.setCardBackgroundColor(Color.RED);
                         wordEditText.setVisibility(View.INVISIBLE);
                     }

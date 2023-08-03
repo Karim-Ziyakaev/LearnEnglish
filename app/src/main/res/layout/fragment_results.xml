@@ -32,7 +32,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Correct/Incorrect"
+                android:text="@string/correct_incorrect"
                 android:textSize="20sp"
                 android:layout_gravity="center"/>
             <LinearLayout
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Learn progress"
+                android:text="@string/learn_progress"
                 android:textSize="20sp"
                 android:layout_gravity="center"/>
             <RelativeLayout

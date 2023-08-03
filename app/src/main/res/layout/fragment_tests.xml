@@ -7,26 +7,21 @@
     tools:context=".fragments.TestsFragment">
 
     <GridLayout
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_margin="15dp"
         android:id="@+id/gridTests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rowCount="2"
+        android:rowCount="3"
         android:columnCount="2"
-        android:layout_above="@id/cardTestCombo">
+        android:layout_above="@id/bottom_navigation">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardTestENRU"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_gravity="fill"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_margin="8dp"
+            android:layout_margin="5dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
             android:foreground="?android:attr/selectableItemBackground"
@@ -36,139 +31,179 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center_vertical|center_horizontal">
+                android:layout_gravity="center">
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/test1" />
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test1"
+                    android:layout_weight="3"/>
+                <TextView
+                    app:autoSizeTextType="uniform"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/en_ru"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardTestChoice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:layout_gravity="fill"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
             android:clickable="true"
-            android:shape="ring">
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center_vertical|center_horizontal">
+                android:layout_gravity="center">
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_query_stats_24"/>
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test2"
+                    android:layout_weight="3"/>
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Choice"
-                    android:textStyle="bold"
-                    android:textAlignment="center"/>
+                    app:autoSizeTextType="uniform"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/choice"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
             </LinearLayout>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardTestRUEN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_gravity="fill"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true">
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center_vertical|center_horizontal">
+                android:layout_gravity="center">
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_query_stats_24"/>
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test5"
+                    android:layout_weight="3"/>
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="EN/RU"
+                    app:autoSizeTextType="uniform"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/ru_en"
                     android:textStyle="bold"
-                    android:textAlignment="center"/>
+                    android:layout_weight="1"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardTestChoiceRu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:layout_gravity="fill"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true">
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center_vertical|center_horizontal">
+                android:layout_gravity="center">
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/test1"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test4"
+                    android:layout_weight="3"/>
+                <TextView
+                    app:autoSizeTextType="uniform"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/choice_ru"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardTestCombo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnSpan="2"
+            android:layout_columnWeight="1"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test3"
+                    android:layout_weight="3"/>
+                <TextView
+                    app:autoSizeTextType="uniform"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="@string/combo"
+                    android:textStyle="bold"
+                    android:layout_weight="1"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </GridLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardTestCombo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bottom_navigation"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/test1" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

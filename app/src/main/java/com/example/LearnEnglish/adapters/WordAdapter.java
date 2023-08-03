@@ -274,15 +274,15 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     @Override
     public void onItemDismiss(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Delete")
+        builder.setTitle(context.getString(R.string.delete))
                 .setMessage(wordList.get(position).getWord() + "?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         removeByIdx(position);
                         dialog.cancel();
                     }
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton(context.getString(R.string.no), null)
                 .create()
                 .show();
         notifyItemChanged(position);
@@ -419,7 +419,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         wordEditText.setText(currentWord);
         translationEditText.setText(currentTranslation);
         builder.setView(dialogView)
-                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                .setPositiveButton(context.getString(R.string.change), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -428,9 +428,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
 
                         if (s_word.isEmpty() || s_translate.isEmpty()) {
                             if (s_word.isEmpty())
-                                wordEditText.setError("Error, empty word");
+                                wordEditText.setError(context.getString(R.string.error_empty_word));
                             else
-                                translationEditText.setError("Error, empty translation");
+                                translationEditText.setError(context.getString(R.string.error_empty_translate));
                         } else {
                             s_word = s_word.substring(0,1).toUpperCase() + s_word.substring(1).toLowerCase();
                             s_translate = s_translate.substring(0,1).toUpperCase() + s_translate.substring(1).toLowerCase();
@@ -447,7 +447,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(context.getString(R.string.cancel), null)
                 .create()
                 .show();
     }
@@ -464,9 +464,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         final TextView percentProgressText = dialogView.findViewById(R.id.percent_progress_text);
         final ProgressBar progressBar = dialogView.findViewById(R.id.progress_bar);
         wordText.setText(word.getWord());
-        correctText.setText("Correct attempts: " + word.getCorrectAttempts());
-        wrongText.setText("Wrong attempts: " + word.getWrongAttempts());
-        totalText.setText("Total attempts: " + word.getAttempts());
+        correctText.setText(context.getString(R.string.correct_attempts) + ": " + word.getCorrectAttempts());
+        wrongText.setText(context.getString(R.string.wrong_attempts) + ": " + word.getWrongAttempts());
+        totalText.setText(context.getString(R.string.total_attempts) + ": " + word.getAttempts());
         float kd =(float) word.getCorrectAttempts()/(word.getWrongAttempts()==0?1:word.getWrongAttempts());
         float percent = (kd/10) * 100;
         String strKd = String.valueOf(kd);
@@ -475,7 +475,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         percentProgressText.setText(strPercent);
         progressBar.setProgress((int)percent);
         builder.setView(dialogView)
-                .setNeutralButton("Ok", null)
+                .setNeutralButton("OK", null)
                 .create()
                 .show();
     }

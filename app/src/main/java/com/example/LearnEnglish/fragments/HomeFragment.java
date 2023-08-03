@@ -129,7 +129,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         final Button randomButton = dialogView.findViewById(R.id.random_button);
         final TextView successText = dialogView.findViewById(R.id.success_text);
         builder.setView(dialogView)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener(){
+                .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         DatabaseAdapter db_adapter = new DatabaseAdapter(context);
@@ -148,13 +148,13 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             if (s_word.isEmpty() || s_translate.isEmpty()) {
                 successText.setVisibility(View.INVISIBLE);
                 if (s_word.isEmpty() && s_translate.isEmpty()) {
-                    wordEditText.setError("Error, empty word");
-                    translationEditText.setError("Error, empty translation");
+                    wordEditText.setError(getString(R.string.error_empty_word));
+                    translationEditText.setError(getString(R.string.error_empty_translate));
                 }
                 else if (s_word.isEmpty())
-                    wordEditText.setError("Error, empty translation");
+                    wordEditText.setError(getString(R.string.error_empty_word));
                 else
-                    translationEditText.setError("Error, empty translation");
+                    translationEditText.setError(getString(R.string.error_empty_translate));
             } else {
                 s_word = s_word.substring(0, 1).toUpperCase() + s_word.substring(1).toLowerCase();
                 s_translate = s_translate.substring(0, 1).toUpperCase() + s_translate.substring(1).toLowerCase();
@@ -397,9 +397,9 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
         MenuItem itemWords = menu.findItem(R.id.item_hide_word);
         MenuItem itemTranslates = menu.findItem(R.id.item_hide_translate);
 
-        itemWords.setChecked(!adapter.getShowWord());
-        itemBtns.setChecked(!adapter.getShowButtons());
-        itemTranslates.setChecked(!adapter.getShowTranslation());
+        itemWords.setChecked(adapter.getShowWord());
+        itemBtns.setChecked(adapter.getShowButtons());
+        itemTranslates.setChecked(adapter.getShowTranslation());
         itemSort.setChecked(sortAZ);
 
         //грязный костыль для сорт, можно сделать потом проверку на изменения
@@ -427,7 +427,7 @@ public class HomeFragment extends Fragment implements WordAdapter.OnSelectionCha
             itemWords.setVisible(false);
             itemTranslates.setVisible(false);
 
-            requireActivity().setTitle(String.format("Selected: %d", adapter.getSelectedItemCount()));
+            requireActivity().setTitle(getString(R.string.selected_words, adapter.getSelectedItemCount()));
             requireActivity().invalidateOptionsMenu();
         } else {
             itemDelete.setVisible(false);

@@ -21,21 +21,21 @@
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Correct attemps"
+        android:text="@string/correct_attempts"
         android:textSize="20dp"/>
     <TextView
         android:id="@+id/wrong_text"
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wrong attemps"
+        android:text="@string/wrong_attempts"
         android:textSize="20dp"/>
     <TextView
         android:id="@+id/total_text"
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total attemps"
+        android:text="@string/total_attempts"
         android:textSize="20dp"/>
     <TextView
         android:layout_marginTop="10dp"

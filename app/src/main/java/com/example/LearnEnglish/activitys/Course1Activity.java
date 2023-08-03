@@ -4,6 +4,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,28 +13,24 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.LearnEnglish.R;
+import com.example.LearnEnglish.adapters.DatabaseAdapter;
 import com.example.LearnEnglish.adapters.VideoAdapter;
 import com.example.LearnEnglish.models.Video;
 
+import org.xml.sax.helpers.XMLReaderFactory;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Course1Activity extends AppCompatActivity {
-
-    ArrayList<Video> videos = new ArrayList<>();
+    SharedPreferences settings;
+    ArrayList<Video> videos;
     ListView videosList;
-    String videosID[] = new String[] {
-            "BAahBqreWZw","ysz_Dxcrfsg", "EMdmZ42heRE", "xC0MwjgLGA4", "Gn4gfQmxlK0",
-            "GQP2b8ZMHWI", "xmcLMu2OxmA", "5VIgKFpp3ak", "Ik1G4nlbXGQ", "x-P7-oML3mQ",
-            "IGyp82h3no8", "5B44ZzBs2Tg", "owkrGMINkOM", "jKzF4lBimXc", "SOcCOltbk_o",
-            "oiVXwDhPfPs", "EYWHhBe1u4c", "odWkcYJwVWQ", "qyr3HGYtg-A", "qLxBLp1At40",
-            "7Bgw6kzWI6g", "WjnKDFCJg7Q", "un_8wI2_8ME", "Cl91cczpGho", "Z7a72Fo4pbc",
-            "PaVjeXxvdNE", "-1OsLpzk_rw", "D9ppa0uRHZw", "LAwq8zpYUyg", "ZtycLb1isko",
-            "DQaI8xpTqes", "r5pLQRf9fHY", "QWAXSVuc9RY", "Z-_AJ2EbA-s", "1BgvxodE3Zo",
-            "hBzrp91-moM", "yDo4ctMQzv0", "Fd1zdFeaCog", "al6c0zXUhtw", "S9t2mJiBlEY",
-            "wABrHheTURo", "q63fvc8FYJU", "Ic5pPWSQ9NM", "J8MyJEoEdP4", "vv8KEuwpuTQ",
-            "n_mrp-fnbjU", "Nd9cXkOnyP0", "2aMUxHMvJPY", "dqx67G3ErEk", "IJyIbRwP1WU"
-    };
-    final int COUNT_ID = 50;
+    String course;
+    String courseLastVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,33 +42,106 @@ public class Course1Activity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.hide();
 
-        // начальная инициализация списка
-        setInitialData();
+        DatabaseAdapter db_adapter = new DatabaseAdapter(this);
+        db_adapter.open();
+        db_adapter.updateAchievementCourse();
+        db_adapter.close();
+
+        videos = new ArrayList<>();
         // получаем элемент ListView
         videosList = findViewById(R.id.videosList);
-        // создаем адаптер
+
+        Bundle arguments = getIntent().getExtras();
+        String selectedCourse = arguments.get("selectedCourse").toString();
+
+        switch (selectedCourse){
+            case "Course1":
+                course = "course_english_zero";
+                courseLastVideo = getString(R.string.english_zero);
+                break;
+            case "CourseTimes":
+                course = "course_times";
+                courseLastVideo = getString(R.string.times_in_english);
+                break;
+            case "CourseLifehacks":
+                course = "course_lifehacks";
+                courseLastVideo = getString(R.string.lifehacks);
+                break;
+            case "CourseGames":
+                course = "course_games";
+                courseLastVideo = getString(R.string.games_english);
+                break;
+            default:
+                break;
+        }
+
+        XmlPullParser xpp = getResources().getXml(R.xml.courses_data);
+
+        Video currentVideo = null;
+        boolean inEntry = false;
+        String textValue = "";
+        String startTag = null;
+        String endTag = null;
+        try {
+            int eventType = xpp.getEventType();
+            while (eventType!= XmlPullParser.END_DOCUMENT && !Objects.equals(startTag, course)){
+                if(eventType == XmlPullParser.START_TAG){
+                    startTag = xpp.getName();
+                }
+                eventType = xpp.next();
+            }
+            while(eventType != XmlPullParser.END_DOCUMENT && !Objects.equals(endTag, course)){
+                String tagName = xpp.getName();
+                switch (eventType){
+                    case XmlPullParser.START_TAG:
+                        if("snippet".equalsIgnoreCase(tagName)){
+                            inEntry = true;
+                            currentVideo = new Video();
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        textValue = xpp.getText();
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if(inEntry){
+                            if("snippet".equalsIgnoreCase(tagName)){
+                                videos.add(currentVideo);
+                                inEntry = false;
+                            } else if("videoId".equalsIgnoreCase(tagName)){
+                                currentVideo.setId(textValue);
+                            } else if("title".equalsIgnoreCase(tagName)){
+                                currentVideo.setTitle(textValue);
+                            }
+                        }
+                        endTag = xpp.getName();
+                        break;
+                    default:
+                }
+                eventType = xpp.next();
+            }
+        }
+        catch (IOException | XmlPullParserException e) {
+            e.printStackTrace();
+        }
+
+        videosList = findViewById(R.id.videosList);
         VideoAdapter videoAdapter = new VideoAdapter(this, R.layout.list_video_item, videos);
-        // устанавливаем адаптер
         videosList.setAdapter(videoAdapter);
-        // слушатель выбора в списке
         AdapterView.OnItemClickListener itemListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                // получаем выбранный пункт
                 Video selectedVideo = (Video)parent.getItemAtPosition(position);
-                Intent intent = new Intent(Course1Activity.this, VideoActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra("id", selectedVideo.getId());
-                startActivity(intent);
+
+                settings = getSharedPreferences("LastVideo", 0);
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putString("course", courseLastVideo);
+                prefEditor.putString("video_id", selectedVideo.getId());
+                prefEditor.putString("title", selectedVideo.getTitle());
+                prefEditor.apply();
+
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + selectedVideo.getId())));
             }
         };
         videosList.setOnItemClickListener(itemListener);
-    }
-
-    private void setInitialData(){
-        String title = "ВЕСЬ АНГЛИЙСКИЙ ЯЗЫК В ОДНОМ КУРСЕ УРОК ";
-        for (int i = 0; i < COUNT_ID; i++) {
-            videos.add(new Video(title + (i + 1), videosID[i]));
-        }
     }
 }
